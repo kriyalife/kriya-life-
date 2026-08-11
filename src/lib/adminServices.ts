@@ -11,18 +11,36 @@ export interface ProductInput {
 }
 
 export const uploadImage = async (file: File): Promise<string> => {
+  const name = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+  
+  // Primary attempt: 'products' bucket
   try {
-    const name = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
     const { error } = await supabase.storage
       .from('products')
-      .upload(name, file);
+      .upload(name, file, { cacheControl: '3600', upsert: true });
 
     if (!error) {
       const publicUrl = supabase.storage.from('products').getPublicUrl(name).data.publicUrl;
       if (publicUrl) return publicUrl;
+    } else {
+      console.warn('Notice uploading to "products" bucket:', error.message);
     }
   } catch (err) {
-    console.warn('Notice uploading to Supabase storage:', err);
+    console.warn('Notice uploading to "products" bucket:', err);
+  }
+
+  // Secondary attempt: 'products-images' bucket
+  try {
+    const { error } = await supabase.storage
+      .from('products-images')
+      .upload(name, file, { cacheControl: '3600', upsert: true });
+
+    if (!error) {
+      const publicUrl = supabase.storage.from('products-images').getPublicUrl(name).data.publicUrl;
+      if (publicUrl) return publicUrl;
+    }
+  } catch (err) {
+    console.warn('Notice uploading to "products-images" bucket:', err);
   }
 
   // Fallback to Base64 Data URL so upload never breaks UX

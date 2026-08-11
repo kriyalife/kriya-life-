@@ -150,26 +150,29 @@ export const ProductsManager: React.FC = () => {
           try {
             const name = `${Date.now()}${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
             const isVideo = file.type.startsWith('video/') || /\.(mp4|webm|ogg|mov)$/i.test(file.name);
-            const bucketName = isVideo ? 'products-videos' : 'products-images';
+            const primaryBucket = isVideo ? 'products-videos' : 'products';
 
-            const { error } = await supabase.storage
-              .from(bucketName)
-              .upload(name, file);
+            // Primary bucket upload
+            const { error: err1 } = await supabase.storage
+              .from(primaryBucket)
+              .upload(name, file, { cacheControl: '3600', upsert: true });
 
-            if (!error) {
-              const publicUrl = supabase.storage.from(bucketName).getPublicUrl(name).data.publicUrl;
+            if (!err1) {
+              const publicUrl = supabase.storage.from(primaryBucket).getPublicUrl(name).data.publicUrl;
               if (publicUrl) {
                 fileUrl = publicUrl;
               }
             } else {
-              // Try fallback bucket 'products'
+              // Secondary fallback bucket upload
+              const secondaryBucket = isVideo ? 'videos' : 'products-images';
               const { error: err2 } = await supabase.storage
-                .from('products')
-                .upload(name, file);
+                .from(secondaryBucket)
+                .upload(name, file, { cacheControl: '3600', upsert: true });
+
               if (!err2) {
-                fileUrl = supabase.storage.from('products').getPublicUrl(name).data.publicUrl;
+                fileUrl = supabase.storage.from(secondaryBucket).getPublicUrl(name).data.publicUrl;
               } else {
-                console.warn(`Storage upload notice for ${bucketName} (falling back to local media URL):`, error.message || error);
+                console.warn(`Storage upload notice for ${primaryBucket}/${secondaryBucket}:`, err1.message || err2.message);
               }
             }
           } catch (storageErr) {
