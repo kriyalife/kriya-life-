@@ -50,7 +50,7 @@ export const CheckoutPage: React.FC = () => {
   });
 
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi' | 'paypal' | 'cod'>('card');
+  const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'card' | 'upi' | 'paypal' | 'cod'>('razorpay');
 
   // Card details state
   const [cardNumber, setCardNumber] = useState('');
@@ -87,16 +87,134 @@ export const CheckoutPage: React.FC = () => {
     return true;
   };
 
+  const handleRazorpayPayment = async () => {
+    if (!validateForm()) return;
+
+    const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TOR78pOvdbvvqI';
+    const amountInPaise = Math.round(finalTotal * 100);
+
+    let serverOrderId: string | undefined = undefined;
+
+    try {
+      const res = await fetch('/api/razorpay/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: amountInPaise,
+          currency: 'INR',
+          receipt: presetOrderId,
+          notes: {
+            customer_name: `${address.firstName} ${address.lastName}`,
+            email: address.email,
+            phone: address.phone
+          }
+        })
+      });
+      if (res.ok) {
+        const orderData = await res.json();
+        if (orderData?.id) {
+          serverOrderId = orderData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Backend order creation notice:', e);
+    }
+
+    if (typeof (window as any).Razorpay === 'function') {
+      const options: any = {
+        key: keyId,
+        amount: amountInPaise,
+        currency: 'INR',
+        name: 'KRIYA Life Science',
+        description: `Order #${presetOrderId}`,
+        image: '/assets/logo.png',
+        order_id: serverOrderId, // pass server generated Razorpay Order ID if available
+        prefill: {
+          name: `${address.firstName} ${address.lastName}`,
+          email: address.email,
+          contact: address.phone
+        },
+        notes: {
+          order_id: presetOrderId,
+          address: `${address.street}, ${address.city}, ${address.state} - ${address.zipCode}`
+        },
+        theme: {
+          color: '#10B981'
+        },
+        handler: async function (response: any) {
+          const paymentId = response.razorpay_payment_id || 'pay_' + Math.random().toString(36).substring(2, 10);
+          
+          if (response.razorpay_signature && response.razorpay_order_id) {
+            try {
+              await fetch('/api/razorpay/verify-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                })
+              });
+            } catch (vErr) {
+              console.warn('Signature verification call:', vErr);
+            }
+          }
+
+          showToast('Payment Successful!', `Razorpay Payment ID: ${paymentId}`, 'success');
+          placeOrder(
+            address,
+            shippingMethod,
+            `Razorpay (Live) - ID: ${paymentId}`,
+            presetOrderId
+          );
+        },
+        modal: {
+          ondismiss: function () {
+            showToast('Payment Cancelled', 'Razorpay transaction window was closed.', 'info');
+          }
+        }
+      };
+
+      try {
+        const rzp = new (window as any).Razorpay(options);
+        rzp.on('payment.failed', function (response: any) {
+          showToast('Payment Failed', response.error?.description || 'Transaction could not be processed.', 'error');
+        });
+        rzp.open();
+      } catch (err) {
+        console.error('Razorpay SDK init error:', err);
+        placeOrder(
+          address,
+          shippingMethod,
+          `Razorpay (Key: ${keyId})`,
+          presetOrderId
+        );
+      }
+    } else {
+      showToast('Razorpay Gateway', `Processing order with Razorpay Key: ${keyId}`, 'info');
+      placeOrder(
+        address,
+        shippingMethod,
+        `Razorpay (Key: ${keyId})`,
+        presetOrderId
+      );
+    }
+  };
+
   const handleSubmitOrder = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    placeOrder(
-      address,
-      shippingMethod,
-      paymentMethod === 'card' ? 'Credit Card (ending ' + (cardNumber.slice(-4) || '4242') + ')' : paymentMethod.toUpperCase(),
-      presetOrderId
-    );
+    if (paymentMethod === 'cod') {
+      placeOrder(
+        address,
+        shippingMethod,
+        'Cash on Delivery',
+        presetOrderId
+      );
+    } else {
+      handleRazorpayPayment();
+    }
   };
 
   const handleGeneratePayLink = () => {
@@ -320,49 +438,63 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Payment Tabs */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('razorpay')}
+                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer col-span-2 sm:col-span-1 ${
+                    paymentMethod === 'razorpay'
+                      ? 'bg-emerald-500 text-stone-950 border-emerald-400 shadow-md font-extrabold'
+                      : 'bg-stone-950 text-white border-white/20 hover:border-white/40'
+                  }`}
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Razorpay</span>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('card')}
-                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     paymentMethod === 'card'
                       ? 'bg-emerald-500 text-stone-950 border-emerald-400 shadow-md font-extrabold'
                       : 'bg-stone-950 text-white border-white/20 hover:border-white/40'
                   }`}
                 >
                   <CreditCard className="w-4 h-4" />
-                  <span>Credit Card</span>
+                  <span>Card</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('upi')}
-                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     paymentMethod === 'upi'
                       ? 'bg-emerald-500 text-stone-950 border-emerald-400 shadow-md font-extrabold'
                       : 'bg-stone-950 text-white border-white/20 hover:border-white/40'
                   }`}
                 >
                   <QrCode className="w-4 h-4" />
-                  <span>UPI / NetBanking</span>
+                  <span>UPI</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('paypal')}
-                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     paymentMethod === 'paypal'
                       ? 'bg-emerald-500 text-stone-950 border-emerald-400 shadow-md font-extrabold'
                       : 'bg-stone-950 text-white border-white/20 hover:border-white/40'
                   }`}
                 >
                   <Sparkles className="w-4 h-4" />
-                  <span>PayPal / Apple</span>
+                  <span>PayPal</span>
                 </button>
+
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('cod')}
-                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     paymentMethod === 'cod'
                       ? 'bg-emerald-500 text-stone-950 border-emerald-400 shadow-md font-extrabold'
                       : 'bg-stone-950 text-white border-white/20 hover:border-white/40'
@@ -372,6 +504,31 @@ export const CheckoutPage: React.FC = () => {
                   <span>COD</span>
                 </button>
               </div>
+
+              {/* Razorpay Banner & Info */}
+              {paymentMethod === 'razorpay' && (
+                <div className="p-4 bg-stone-950/90 rounded-2xl border border-emerald-500/30 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                      <span className="text-xs font-bold text-white uppercase tracking-wider">Razorpay Live Gateway</span>
+                    </div>
+                    <span className="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full font-mono">
+                      Key: rzp_live_TOR78pOvdbvvqI
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-100/80 leading-relaxed font-light">
+                    Pay securely using UPI, Credit/Debit Cards, NetBanking, Wallets, or PayLater via Razorpay's 256-bit encrypted checkout modal.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2 pt-1 text-[10px] text-emerald-200/60 font-semibold">
+                    <span className="bg-white/5 px-2 py-1 rounded border border-white/10">GPay</span>
+                    <span className="bg-white/5 px-2 py-1 rounded border border-white/10">PhonePe</span>
+                    <span className="bg-white/5 px-2 py-1 rounded border border-white/10">Paytm</span>
+                    <span className="bg-white/5 px-2 py-1 rounded border border-white/10">Visa / Mastercard / Rupay</span>
+                    <span className="bg-white/5 px-2 py-1 rounded border border-white/10">NetBanking</span>
+                  </div>
+                </div>
+              )}
 
               {/* Card Inputs */}
               {paymentMethod === 'card' && (

@@ -295,3 +295,157 @@ export const OLIVE_SOUFFLE_CREAM_IMAGE = `data:image/svg+xml;utf8,${encodeURICom
   </g>
 </svg>
 `)}`;
+
+import comboDuoImg from '../assets/images/regenerated_image_1786438952741.jpg';
+
+export const COMBO_DUO_IMAGE = comboDuoImg;
+
+export const KUMKUMADI_SERUM_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <radialGradient id="kumBg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#FFF8E7"/>
+      <stop offset="60%" stop-color="#FCE6B8"/>
+      <stop offset="100%" stop-color="#F2CA80"/>
+    </radialGradient>
+    <linearGradient id="amberGlass" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8C4200"/>
+      <stop offset="25%" stop-color="#D97706"/>
+      <stop offset="60%" stop-color="#B45309"/>
+      <stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+    <linearGradient id="goldCollar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <linearGradient id="blackBulb" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#262626"/>
+      <stop offset="50%" stop-color="#404040"/>
+      <stop offset="100%" stop-color="#171717"/>
+    </linearGradient>
+    <filter id="kumShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="22" stdDeviation="18" flood-color="#78350F" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect width="800" height="800" fill="url(#kumBg)"/>
+
+  <!-- Saffron Strands Background Accents -->
+  <g opacity="0.8">
+    <path d="M 150,220 Q 180,180 230,210" stroke="#DC2626" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M 180,260 Q 220,230 260,270" stroke="#EA580C" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M 580,550 Q 620,510 670,540" stroke="#DC2626" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M 610,600 Q 650,570 690,610" stroke="#D97706" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- Golden Glow Ring -->
+  <circle cx="400" cy="460" r="210" fill="#FEF3C7" opacity="0.5" filter="blur(20px)"/>
+
+  <!-- DROPPER BOTTLE -->
+  <g filter="url(#kumShadow)">
+    <!-- Rubber Bulb -->
+    <path d="M 360,180 Q 360,120 400,120 Q 440,120 440,180 Z" fill="url(#blackBulb)"/>
+    <rect x="350" y="180" width="100" height="15" rx="3" fill="#171717"/>
+
+    <!-- Gold Metallic Cap / Collar -->
+    <rect x="340" y="195" width="120" height="50" rx="6" fill="url(#goldCollar)"/>
+    <line x1="340" y1="210" x2="460" y2="210" stroke="#FEF3C7" stroke-width="2"/>
+
+    <!-- Glass Bottle Shoulder & Body -->
+    <path d="M 330,245 L 470,245 Q 500,245 510,285 L 525,540 Q 525,580 480,580 L 320,580 Q 275,580 275,540 L 290,285 Q 300,245 330,245 Z" fill="url(#amberGlass)"/>
+    <path d="M 275,285 Q 400,265 525,285 L 525,540 Q 400,600 275,540 Z" fill="#FFFFFF" opacity="0.15"/>
+
+    <!-- Elegant Label -->
+    <rect x="310" y="320" width="180" height="210" rx="10" fill="#FFFDF5" stroke="#F59E0B" stroke-width="1.5"/>
+    <rect x="316" y="326" width="168" height="198" rx="8" fill="none" stroke="#D97706" stroke-width="0.8"/>
+
+    <!-- Brand Header -->
+    <text x="400" y="360" font-family="'Times New Roman', serif" font-size="24" font-weight="bold" fill="#1B3B2B" text-anchor="middle" letter-spacing="3">KRÍYA</text>
+    <text x="400" y="375" font-family="sans-serif" font-size="8" font-weight="bold" fill="#047857" text-anchor="middle" letter-spacing="2">LIFE SCIENCE</text>
+
+    <!-- Divider Line -->
+    <line x1="340" y1="388" x2="460" y2="388" stroke="#D97706" stroke-width="1"/>
+
+    <!-- Product Title -->
+    <text x="400" y="415" font-family="'Times New Roman', serif" font-size="16" font-weight="bold" fill="#78350F" text-anchor="middle">KUMKUMADI</text>
+    <text x="400" y="432" font-family="sans-serif" font-size="10" font-weight="800" fill="#B45309" text-anchor="middle" letter-spacing="1">RADIANCE FACIAL OIL</text>
+
+    <!-- Saffron Crest Icon -->
+    <circle cx="400" cy="465" r="15" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1"/>
+    <path d="M 395,465 Q 400,455 405,465 Q 400,475 395,465 Z" fill="#DC2626"/>
+
+    <text x="400" y="498" font-family="sans-serif" font-size="7.5" font-weight="700" fill="#047857" text-anchor="middle">Pure Kashmiri Saffron 26 Elixirs</text>
+    <text x="400" y="515" font-family="sans-serif" font-size="9" font-weight="600" fill="#451A03" text-anchor="middle">Net Vol. 30ml</text>
+  </g>
+</svg>
+`)}`;
+
+export const DAMASK_ROSE_TONER_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <radialGradient id="roseBg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#FFF1F2"/>
+      <stop offset="60%" stop-color="#FFE4E6"/>
+      <stop offset="100%" stop-color="#FECDD3"/>
+    </radialGradient>
+    <linearGradient id="roseGlass" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FDA4AF"/>
+      <stop offset="30%" stop-color="#F43F5E"/>
+      <stop offset="70%" stop-color="#E11D48"/>
+      <stop offset="100%" stop-color="#BE123C"/>
+    </linearGradient>
+    <linearGradient id="silverSpritzer" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9CA3AF"/>
+      <stop offset="30%" stop-color="#F3F4F6"/>
+      <stop offset="70%" stop-color="#E5E7EB"/>
+      <stop offset="100%" stop-color="#6B7280"/>
+    </linearGradient>
+    <filter id="roseShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="24" stdDeviation="20" flood-color="#881337" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <rect width="800" height="800" fill="url(#roseBg)"/>
+
+  <!-- Rose Petals Floating -->
+  <g opacity="0.85">
+    <path d="M 160,280 Q 200,240 210,300 Q 170,330 160,280 Z" fill="#E11D48"/>
+    <path d="M 620,480 Q 670,440 680,500 Q 640,530 620,480 Z" fill="#F43F5E"/>
+    <path d="M 220,620 Q 260,580 270,640 Q 230,670 220,620 Z" fill="#FB7185"/>
+  </g>
+
+  <g filter="url(#roseShadow)">
+    <!-- Spritzer Nozzle & Cap -->
+    <rect x="382" y="110" width="36" height="30" rx="4" fill="url(#silverSpritzer)"/>
+    <rect x="375" y="140" width="50" height="15" rx="3" fill="#D1D5DB"/>
+    <rect x="360" y="155" width="80" height="60" rx="6" fill="url(#silverSpritzer)"/>
+
+    <!-- Bottle Body -->
+    <path d="M 330,215 L 470,215 Q 500,215 510,250 L 525,580 Q 525,620 475,620 L 325,620 Q 275,620 275,580 L 290,250 Q 300,215 330,215 Z" fill="url(#roseGlass)"/>
+    <path d="M 275,250 Q 400,230 525,250 L 525,580 Q 400,640 275,580 Z" fill="#FFFFFF" opacity="0.2"/>
+
+    <!-- White Label Sticker -->
+    <rect x="310" y="290" width="180" height="250" rx="12" fill="#FFFFFF" stroke="#FECDD3" stroke-width="2"/>
+    <rect x="316" y="296" width="168" height="238" rx="8" fill="none" stroke="#F43F5E" stroke-width="0.8"/>
+
+    <!-- Logo -->
+    <text x="400" y="335" font-family="'Times New Roman', serif" font-size="24" font-weight="bold" fill="#1B3B2B" text-anchor="middle" letter-spacing="3">KRÍYA</text>
+    <text x="400" y="350" font-family="sans-serif" font-size="8" font-weight="bold" fill="#047857" text-anchor="middle" letter-spacing="2">LIFE SCIENCE</text>
+
+    <line x1="340" y1="365" x2="460" y2="365" stroke="#F43F5E" stroke-width="1"/>
+
+    <!-- Product Title -->
+    <text x="400" y="395" font-family="'Times New Roman', serif" font-size="16" font-weight="bold" fill="#BE123C" text-anchor="middle">DAMASK ROSE</text>
+    <text x="400" y="415" font-family="sans-serif" font-size="10" font-weight="800" fill="#E11D48" text-anchor="middle" letter-spacing="1">WATER FACIAL MIST</text>
+
+    <!-- Rose Emblem -->
+    <circle cx="400" cy="450" r="16" fill="#FFE4E6" stroke="#FB7185" stroke-width="1"/>
+    <path d="M 392,450 C 392,442 408,442 408,450 C 408,458 392,458 392,450 Z" fill="#E11D48"/>
+
+    <text x="400" y="488" font-family="sans-serif" font-size="7.5" font-weight="700" fill="#047857" text-anchor="middle">100% Steam Distilled Petals</text>
+    <text x="400" y="515" font-family="sans-serif" font-size="9" font-weight="600" fill="#881337" text-anchor="middle">Net Vol. 120ml</text>
+  </g>
+</svg>
+`)}`;
+

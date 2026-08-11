@@ -46,14 +46,16 @@ export async function autoSeedSupabase() {
       }
     }
 
-    // 2. Auto-seed Orders into Supabase if empty
-    const { data: existingOrders, error: orderErr } = await supabase
-      .from('orders')
-      .select('id');
+    // 2. Auto-seed Orders into Supabase if empty (only once unless explicitly requested)
+    const hasSeededOrders = typeof window !== 'undefined' && localStorage.getItem('kriya_has_seeded_orders') === 'true';
+    if (!hasSeededOrders) {
+      const { data: existingOrders, error: orderErr } = await supabase
+        .from('orders')
+        .select('id');
 
-    if (!orderErr && (!existingOrders || existingOrders.length === 0)) {
-      console.log('Supabase orders table is empty. Auto-seeding initial orders...');
-      const sampleOrders = [
+      if (!orderErr && (!existingOrders || existingOrders.length === 0)) {
+        console.log('Supabase orders table is empty. Auto-seeding initial orders...');
+        const sampleOrders = [
         {
           customer_name: 'Meet Dave',
           customer_email: 'meetdave3640@gmail.com',
@@ -119,7 +121,11 @@ export async function autoSeedSupabase() {
       } else {
         console.log('Successfully auto-seeded initial sample orders into Supabase orders table!');
       }
+      try {
+        localStorage.setItem('kriya_has_seeded_orders', 'true');
+      } catch {}
     }
+  }
   } catch (err) {
     console.warn('Auto seed Supabase exception:', err);
   }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Product, Shade } from '../types';
 import { useShop } from '../context/ShopContext';
-import { Heart, ShoppingBag, Eye, Star, Sparkles, Check } from 'lucide-react';
+import { Heart, ShoppingBag, Eye, Star, Sparkles, Check, Play, Film } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ImageWithFallback } from './ImageWithFallback';
 
@@ -17,6 +17,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const isFavorite = isInWishlist(product.id);
+  const hasVideo = product.media?.some(m => m.type === 'video') || Boolean(product.video_url);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -61,7 +62,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               NATURAL
             </span>
           )}
+
         </div>
+
+
 
         {/* Wishlist Button */}
         <button

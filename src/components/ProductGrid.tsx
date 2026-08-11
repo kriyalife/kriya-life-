@@ -96,7 +96,7 @@ export const ProductGrid: React.FC = () => {
         </div>
 
         {/* Visible Search & Filter Bar */}
-        <div className="bg-stone-900/60 backdrop-blur-xl rounded-3xl p-5 sm:p-6 border border-white/15 shadow-2xl mb-8 space-y-6">
+        <div className="hidden md:block bg-stone-900/60 backdrop-blur-xl rounded-3xl p-5 sm:p-6 border border-white/15 shadow-2xl mb-8 space-y-6">
           
           {/* Category Filter Pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none no-scrollbar">

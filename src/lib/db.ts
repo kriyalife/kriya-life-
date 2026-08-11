@@ -31,31 +31,46 @@ export interface OrderRecord {
 }
 
 const LOCAL_ORDERS_KEY = 'kriya_local_orders';
+const DELETED_ORDERS_KEY = 'kriya_deleted_orders';
 
-export const getLocalOrders = (): OrderRecord[] => {
+export const getDeletedOrderIds = (): string[] => {
   try {
-    const data = localStorage.getItem(LOCAL_ORDERS_KEY);
+    const data = localStorage.getItem(DELETED_ORDERS_KEY);
     return data ? JSON.parse(data) : [];
   } catch {
     return [];
   }
 };
 
+export const getLocalOrders = (): OrderRecord[] => {
+  try {
+    const data = localStorage.getItem(LOCAL_ORDERS_KEY);
+    const parsed: OrderRecord[] = data ? JSON.parse(data) : [];
+    const deletedIds = getDeletedOrderIds();
+    return parsed.filter(o => o.id && !deletedIds.includes(o.id));
+  } catch {
+    return [];
+  }
+};
+
 export const getOrders = async (): Promise<OrderRecord[] | null> => {
+  const deletedIds = getDeletedOrderIds();
   try {
     const { data, error } = await supabase
       .from('orders')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.warn('Notice loading orders from Supabase:', error.message);
-      return getLocalOrders();
+    if (error || !data) {
+      const local = getLocalOrders();
+      return local.filter(o => o.id && !deletedIds.includes(o.id));
     }
-    return data || getLocalOrders();
+    const filtered = data.filter((o: any) => o.id && !deletedIds.includes(o.id));
+    return filtered;
   } catch (err) {
     console.warn('Supabase getOrders exception, using local orders:', err);
-    return getLocalOrders();
+    const local = getLocalOrders();
+    return local.filter(o => o.id && !deletedIds.includes(o.id));
   }
 };
 
@@ -221,19 +236,60 @@ export const updateOrderStatusInSupabase = async (id: string, status: string): P
   }
 };
 
-export const deleteOrderFromSupabase = async (id: string): Promise<void> => {
-  const existing = getLocalOrders();
-  const updated = existing.filter((o) => o.id !== id);
+export const deleteOrderFromSupabase = async (id: string, fullOrder?: Partial<OrderRecord>): Promise<void> => {
+  if (!id) return;
+
+  // Mark as seeded so autoSeed doesn't re-add deleted orders
   try {
+    localStorage.setItem('kriya_has_seeded_orders', 'true');
+  } catch {}
+
+  // Add to deleted set
+  try {
+    const deleted = getDeletedOrderIds();
+    if (!deleted.includes(id)) {
+      deleted.push(id);
+      localStorage.setItem(DELETED_ORDERS_KEY, JSON.stringify(deleted));
+    }
+  } catch (e) {
+    console.error('Failed to update deleted order ids in localStorage', e);
+  }
+
+  // Remove from local storage kriya_local_orders
+  try {
+    const existing = getLocalOrders();
+    const updated = existing.filter((o) => o.id !== id);
     localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(updated));
   } catch (e) {
     console.error('Failed to delete order from localStorage', e);
   }
 
+  // Remove from kriya_orders (ShopContext storage)
+  try {
+    const shopOrdersRaw = localStorage.getItem('kriya_orders');
+    if (shopOrdersRaw) {
+      const shopOrders = JSON.parse(shopOrdersRaw);
+      if (Array.isArray(shopOrders)) {
+        const filteredShop = shopOrders.filter((o: any) => o.id !== id);
+        localStorage.setItem('kriya_orders', JSON.stringify(filteredShop));
+      }
+    }
+  } catch (e) {
+    console.error('Failed to update kriya_orders in localStorage', e);
+  }
+
+  // Delete from Supabase
   try {
     const { error } = await supabase.from('orders').delete().eq('id', id);
     if (error) {
-      console.warn('Notice deleting order from Supabase:', error.message);
+      console.warn('Notice deleting order from Supabase by id:', error.message);
+      if (fullOrder?.customer_email && fullOrder?.created_at) {
+        await supabase
+          .from('orders')
+          .delete()
+          .eq('customer_email', fullOrder.customer_email)
+          .eq('created_at', fullOrder.created_at);
+      }
     }
   } catch (err) {
     console.warn('Supabase delete order exception:', err);

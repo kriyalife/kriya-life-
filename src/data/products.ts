@@ -1,5 +1,11 @@
 import { Product } from '../types';
-import { VITAMIN_C_FACEWASH_IMAGE, OLIVE_SOUFFLE_CREAM_IMAGE } from './productImages';
+import { 
+  VITAMIN_C_FACEWASH_IMAGE, 
+  OLIVE_SOUFFLE_CREAM_IMAGE, 
+  COMBO_DUO_IMAGE,
+  KUMKUMADI_SERUM_IMAGE,
+  DAMASK_ROSE_TONER_IMAGE 
+} from './productImages';
 
 export const PRODUCTS: Product[] = [
   {
@@ -32,7 +38,7 @@ export const PRODUCTS: Product[] = [
     images: [
       VITAMIN_C_FACEWASH_IMAGE,
       'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1608248597262-83818e6981f1?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&q=80&w=800'
     ],
     media: [
       { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE, alt: 'Kriya Vitamin C Face Wash 100ml Tube' },
@@ -90,7 +96,7 @@ export const PRODUCTS: Product[] = [
     images: [
       OLIVE_SOUFFLE_CREAM_IMAGE,
       'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1608248597262-83818e6981f1?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1567928269937-251d1469e7f7?auto=format&fit=crop&q=80&w=800'
     ],
     media: [
       { type: 'image', src: OLIVE_SOUFFLE_CREAM_IMAGE, alt: 'Kriya Olive Night Cream 30g Jar' },
@@ -131,12 +137,15 @@ export const PRODUCTS: Product[] = [
     ],
     howToUse: 'Use Vitamin C Face Wash every morning & evening. Apply Olive Night Cream every night after washing.',
     images: [
-      'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=800',
+      COMBO_DUO_IMAGE,
       VITAMIN_C_FACEWASH_IMAGE,
-      OLIVE_SOUFFLE_CREAM_IMAGE
+      OLIVE_SOUFFLE_CREAM_IMAGE,
+      'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&q=80&w=800'
     ],
     media: [
-      { type: 'image', src: 'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=800', alt: 'Kriya Glow Combo Duo' },
+      { type: 'image', src: COMBO_DUO_IMAGE, alt: 'Kriya Complete Glow & Renew Combo Duo' },
+      { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE, alt: 'Vitamin C Face Wash 100ml' },
+      { type: 'image', src: OLIVE_SOUFFLE_CREAM_IMAGE, alt: 'Olive Souffle Cream 30g' },
       { type: 'video', src: '/video-6.mp4', alt: 'Vitamin C Radiance Boost' },
       { type: 'video', src: '/video-7.mp4', alt: 'Deep Moisture Restore' }
     ],
@@ -179,11 +188,15 @@ export const PRODUCTS: Product[] = [
     ],
     howToUse: 'Dispense 3-4 drops onto palms, warm slightly, and gently press into clean skin using gentle upward strokes before bedtime.',
     images: [
+      KUMKUMADI_SERUM_IMAGE,
       'https://images.unsplash.com/photo-1608248597262-83818e6981f1?auto=format&fit=crop&q=80&w=800',
       'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=800'
     ],
     media: [
-      { type: 'image', src: 'https://images.unsplash.com/photo-1608248597262-83818e6981f1?auto=format&fit=crop&q=80&w=800', alt: 'Kumkumadi Oil' }
+      { type: 'image', src: KUMKUMADI_SERUM_IMAGE, alt: 'Kumkumadi Radiance Facial Oil Bottle' },
+      { type: 'image', src: 'https://images.unsplash.com/photo-1608248597262-83818e6981f1?auto=format&fit=crop&q=80&w=800', alt: 'Golden Ayurvedic Serum Dropper' },
+      { type: 'video', src: '/video-4.mp4', alt: 'Kashmiri Saffron Oil Application' },
+      { type: 'video', src: '/video-1.mp4', alt: 'Ayurvedic Golden Glow Massage' }
     ],
     reviews: [
       {
@@ -218,11 +231,15 @@ export const PRODUCTS: Product[] = [
     ],
     howToUse: 'Spritz generously across face and neck after cleansing or anytime throughout the day for an instant refreshing boost.',
     images: [
+      DAMASK_ROSE_TONER_IMAGE,
       'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1512290900676-26c2a48f4134?auto=format&fit=crop&q=80&w=800'
     ],
     media: [
-      { type: 'image', src: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=800', alt: 'Damask Rose Mist' }
+      { type: 'image', src: DAMASK_ROSE_TONER_IMAGE, alt: 'Damask Rose Water Facial Mist Spray Bottle' },
+      { type: 'image', src: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=800', alt: 'Fresh Rose Mist Dew Drops' },
+      { type: 'video', src: '/video-2.mp4', alt: 'Rose Mist Hydration Demo' },
+      { type: 'video', src: '/video-5.mp4', alt: 'Daily Refresh Spray Guide' }
     ],
     reviews: [
       {
@@ -243,4 +260,5 @@ export const PROMO_CODES: Record<string, number> = {
   'WELCOME15': 0.15,
   'GLOW20': 0.20
 };
+
 

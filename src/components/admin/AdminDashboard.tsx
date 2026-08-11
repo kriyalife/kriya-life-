@@ -10,7 +10,10 @@ import {
   X,
   Star,
   Film,
-  Ticket
+  Ticket,
+  ArrowLeft,
+  Globe,
+  Store
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { DashboardOverview } from './DashboardOverview';
@@ -81,11 +84,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, adminE
           </button>
         </div>
 
-        <div className="px-6 pb-6 text-xs font-mono text-emerald-400/80 truncate">
+        <div className="px-6 pb-3 text-xs font-mono text-emerald-400/80 truncate">
           {adminEmail}
         </div>
 
-        <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+        {/* Back to Website Button in Sidebar */}
+        <div className="px-4 pb-3">
+          <button
+            onClick={() => navigate('/')}
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/40 transition-all cursor-pointer shadow-sm group"
+            title="Return to the customer facing store"
+          >
+            <div className="flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4 text-emerald-400 group-hover:-translate-x-1 transition-transform" />
+              <span>Back to Website</span>
+            </div>
+            <Store className="w-4 h-4 text-emerald-400/80" />
+          </button>
+        </div>
+
+        <nav className="flex-1 px-4 py-2 space-y-1.5 overflow-y-auto">
           {menuItems.map((item) => (
             <button
               key={item.id}
@@ -118,16 +136,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, adminE
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-[#0D2217]">
-        {/* Mobile Header */}
-        <header className="lg:hidden bg-[#0B1D13] border-b border-white/10 p-4 flex items-center gap-4 shrink-0 relative z-30 text-white">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 -ml-2 text-stone-300 hover:text-white hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-          <div className="font-serif text-xl font-bold text-white">
-            Kriya Admin
+        {/* Header Bar with Back to Website Button */}
+        <header className="bg-[#0B1D13] border-b border-white/10 px-4 py-3 sm:px-6 flex items-center justify-between shrink-0 relative z-30 text-white shadow-sm">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 -ml-2 text-stone-300 hover:text-white hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
+              aria-label="Toggle Menu"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <div className="font-serif text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+              <span>Kriya Admin</span>
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 rounded-full font-sans font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Live Console
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-stone-950 transition-all cursor-pointer shadow-lg hover:shadow-emerald-500/20 active:scale-95 group font-sans"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              <span>Back to Website</span>
+              <Globe className="w-4 h-4 opacity-80 hidden sm:inline" />
+            </button>
           </div>
         </header>
 

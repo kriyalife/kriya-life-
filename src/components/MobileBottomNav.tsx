@@ -23,6 +23,7 @@ export const MobileBottomNav: React.FC = () => {
 
   const handleShopClick = () => {
     setCurrentView('home');
+    setSelectedCategory('All');
     const catalogEl = document.getElementById('kriya-products-catalog');
     if (catalogEl) {
       catalogEl.scrollIntoView({ behavior: 'smooth' });

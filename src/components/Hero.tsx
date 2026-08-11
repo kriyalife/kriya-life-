@@ -3,7 +3,7 @@ import { useShop } from '../context/ShopContext';
 import { Sparkles, ArrowRight, ShieldCheck, Leaf, Droplet, ShoppingBag, Star, Check } from 'lucide-react';
 import { motion } from 'motion/react';
 import heroBgImage from '../assets/images/regenerated_image_1784986939391.png';
-import comboHeroNewImg from '../assets/images/regenerated_image_1784984937159.jpg';
+import comboHeroNewImg from '../assets/images/regenerated_image_1786438952741.jpg';
 
 export const Hero: React.FC = () => {
   const { products, addToCart, setSelectedProduct, setSelectedCategory, setIsSkinQuizOpen, setIsCartOpen } = useShop();
@@ -45,7 +45,7 @@ export const Hero: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
           {/* Left Column Text Content */}
-          <div className="lg:col-span-8 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 sm:space-y-8 bg-stone-950/70 sm:bg-transparent backdrop-blur-md sm:backdrop-blur-none p-6 sm:p-0 rounded-3xl border border-white/15 sm:border-none shadow-2xl sm:shadow-none">
+          <div className="order-2 lg:order-1 lg:col-span-8 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 sm:space-y-8">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -85,11 +85,16 @@ export const Hero: React.FC = () => {
               <button
                 onClick={() => {
                   setSelectedCategory('All');
-                  window.scrollTo({ top: 750, behavior: 'smooth' });
+                  const catalogEl = document.getElementById('kriya-products-catalog');
+                  if (catalogEl) {
+                    catalogEl.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    window.scrollTo({ top: 750, behavior: 'smooth' });
+                  }
                 }}
                 className="w-full sm:w-auto px-8 py-4 bg-emerald-400 text-stone-950 font-extrabold text-sm tracking-wider rounded-full hover:bg-emerald-300 hover:shadow-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer group"
               >
-                <span>EXPLORE FORMULATIONS</span>
+                <span>SEE ALL PRODUCTS</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </motion.div>
@@ -122,7 +127,7 @@ export const Hero: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4 }}
-            className="lg:hidden w-full max-w-md mx-auto"
+            className="order-1 lg:order-2 lg:hidden w-full max-w-md mx-auto"
           >
             <div 
               onClick={handleQuickViewCombo}

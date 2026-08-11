@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useShop } from '../context/ShopContext';
 import { Package, CheckCircle, Loader2, Calendar, MapPin } from 'lucide-react';
-import { OrderRecord, getLocalOrders } from '../lib/db';
+import { OrderRecord, getLocalOrders, getDeletedOrderIds } from '../lib/db';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,8 +30,10 @@ export const OrderHistory: React.FC<{ onClose?: () => void }> = ({ onClose }) =>
           .order('created_at', { ascending: false });
 
         if (fetchError) throw fetchError;
+        const deletedIds = getDeletedOrderIds();
         if (data && data.length > 0) {
-          setOrders(data);
+          const validOrders = data.filter((o: any) => o.id && !deletedIds.includes(o.id));
+          setOrders(validOrders);
         } else {
           const local = getLocalOrders().filter(o => 
             (o.customer_email || o.user_email || o.email || '').toLowerCase() === currentUser.email.toLowerCase()

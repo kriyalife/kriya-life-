@@ -72,14 +72,14 @@ export const OrdersManager: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, orderRecord?: Order) => {
+    if (!id) return;
     setData(prev => prev.filter(o => o.id !== id));
     
     try {
-      await deleteOrderFromSupabase(id);
-      showToast('Order Deleted', 'The order has been removed.');
+      await deleteOrderFromSupabase(id, orderRecord);
+      showToast('Order Deleted', 'The order has been permanently removed.');
     } catch (err) {
-      fetchOrders(); // Refresh on error
       showToast('Error', 'Failed to delete order.', 'error');
     }
   };
@@ -171,7 +171,7 @@ export const OrdersManager: React.FC = () => {
           <button onClick={() => setSelectedOrder(info.row.original)} className="p-1.5 text-emerald-100/60 hover:text-white hover:bg-white/10 rounded transition-colors cursor-pointer" title="View Details">
             <Eye className="w-4 h-4" />
           </button>
-          <button onClick={() => handleDelete(info.row.original.id)} className="p-1.5 text-emerald-100/60 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-colors cursor-pointer" title="Delete">
+          <button onClick={() => handleDelete(info.row.original.id, info.row.original)} className="p-1.5 text-emerald-100/60 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-colors cursor-pointer" title="Delete Order">
             <Trash2 className="w-4 h-4" />
           </button>
         </div>

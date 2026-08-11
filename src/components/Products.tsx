@@ -38,11 +38,7 @@ export default function Products() {
             <ImageWithFallback src={displayImg} className="w-full h-48 object-cover rounded mb-2" alt={p.name || 'Product'} />
             <h2 className="font-bold text-lg">{p.name}</h2>
             <p className="text-emerald-700 font-semibold">₹{p.price}</p>
-            {p.video_url && (
-              <a href={p.video_url} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 underline mt-1 block">
-                Watch Video
-              </a>
-            )}
+
           </div>
         );
       })}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   getFormspreeId, 
   saveFormspreeId, 
@@ -12,6 +12,14 @@ import {
 } from '../../lib/formspree';
 import { useShop } from '../../context/ShopContext';
 import { 
+  getSupabaseConfig, 
+  updateSupabaseCredentials, 
+  resetSupabaseCredentials, 
+  testSupabaseConnection,
+  SupabaseConnectionStatus 
+} from '../../lib/supabaseClient';
+import { autoSeedSupabase } from '../../lib/autoSeedSupabase';
+import { 
   Mail, 
   Send, 
   CheckCircle2, 
@@ -21,7 +29,13 @@ import {
   ExternalLink,
   Copy,
   Check,
-  Sparkles
+  Sparkles,
+  Database,
+  ShieldAlert,
+  Zap,
+  KeyRound,
+  Layers,
+  Activity
 } from 'lucide-react';
 
 export const AdminSettings: React.FC = () => {
@@ -30,7 +44,126 @@ export const AdminSettings: React.FC = () => {
   const [testing, setTesting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copiedPreorder, setCopiedPreorder] = useState(false);
+  const [copiedSql, setCopiedSql] = useState(false);
+
+  // Supabase state
+  const [supabaseConfig, setSupabaseConfig] = useState(getSupabaseConfig());
+  const [customUrlInput, setCustomUrlInput] = useState(supabaseConfig.url);
+  const [customKeyInput, setCustomKeyInput] = useState(supabaseConfig.anonKey);
+  const [dbStatus, setDbStatus] = useState<SupabaseConnectionStatus | null>(null);
+  const [testingDb, setTestingDb] = useState(false);
+  const [seedingDb, setSeedingDb] = useState(false);
+
   const { showToast } = useShop();
+
+  useEffect(() => {
+    runDbCheck();
+  }, []);
+
+  const runDbCheck = async () => {
+    setTestingDb(true);
+    const result = await testSupabaseConnection();
+    setDbStatus(result);
+    setTestingDb(false);
+  };
+
+  const handleSaveSupabaseConfig = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customUrlInput.trim() || !customKeyInput.trim()) {
+      showToast('Invalid Credentials', 'Please enter a valid Supabase URL and Anon Key.', 'error');
+      return;
+    }
+    const updated = updateSupabaseCredentials(customUrlInput, customKeyInput);
+    setSupabaseConfig(updated);
+    showToast('Supabase Settings Saved', 'Updated local Supabase client configuration.', 'success');
+    runDbCheck();
+  };
+
+  const handleResetSupabaseConfig = () => {
+    const res = resetSupabaseCredentials();
+    setSupabaseConfig(res);
+    setCustomUrlInput(res.url);
+    setCustomKeyInput(res.anonKey);
+    showToast('Reset Credentials', 'Restored environment default Supabase connection parameters.');
+    runDbCheck();
+  };
+
+  const handleManualSeed = async () => {
+    setSeedingDb(true);
+    try {
+      await autoSeedSupabase();
+      showToast('Supabase Seeding Triggered', 'Dispatched products & sample orders to your Supabase tables.', 'success');
+      await runDbCheck();
+    } catch (err: any) {
+      showToast('Seeding Notice', err?.message || 'Attempted seeding to Supabase.', 'info');
+    } finally {
+      setSeedingDb(false);
+    }
+  };
+
+  const handleCopySqlScript = () => {
+    const sqlCode = `-- KRIYA SUPABASE DATABASE SCHEMA
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE IF NOT EXISTS public.products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE,
+  description TEXT,
+  tagline TEXT,
+  price NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+  original_price NUMERIC(10, 2),
+  category TEXT DEFAULT 'Skincare',
+  image_url TEXT,
+  image_urls TEXT[],
+  video_url TEXT,
+  is_bestseller BOOLEAN DEFAULT false,
+  is_new BOOLEAN DEFAULT false,
+  is_organic BOOLEAN DEFAULT true,
+  is_active BOOLEAN DEFAULT true,
+  stock_quantity INTEGER DEFAULT 100,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.orders (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  product_id UUID REFERENCES public.products(id) ON DELETE SET NULL,
+  product_name TEXT,
+  customer_name TEXT NOT NULL,
+  customer_email TEXT NOT NULL,
+  user_email TEXT,
+  phone TEXT NOT NULL,
+  address TEXT NOT NULL,
+  shipping_address TEXT,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  price NUMERIC(10, 2) DEFAULT 0.00,
+  total_price NUMERIC(10, 2) DEFAULT 0.00,
+  shipping_method TEXT DEFAULT 'Standard Express',
+  shipping_cost NUMERIC(10, 2) DEFAULT 0.00,
+  payment_method TEXT DEFAULT 'Cash on Delivery',
+  payment_status TEXT DEFAULT 'Pending (COD)',
+  status TEXT DEFAULT 'pending',
+  items_breakdown TEXT,
+  tracking_number TEXT,
+  pay_link TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read products" ON public.products FOR SELECT USING (true);
+CREATE POLICY "Public write orders" ON public.orders FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public read orders" ON public.orders FOR SELECT USING (true);
+CREATE POLICY "Public update orders" ON public.orders FOR UPDATE USING (true);
+CREATE POLICY "Public delete orders" ON public.orders FOR DELETE USING (true);
+`;
+    navigator.clipboard.writeText(sqlCode);
+    setCopiedSql(true);
+    showToast('SQL Schema Copied!', 'Paste into your Supabase SQL Editor to initialize database tables.');
+    setTimeout(() => setCopiedSql(false), 2500);
+  };
 
   const handleSaveStandard = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,10 +243,10 @@ export const AdminSettings: React.FC = () => {
         <div>
           <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-white flex items-center gap-3">
             <Sliders className="w-7 h-7 text-emerald-400" />
-            <span>Store & Formspree Settings</span>
+            <span>Store & Integration Settings</span>
           </h1>
           <p className="text-xs sm:text-sm text-emerald-100/70 mt-1">
-            Configure separate Formspree Form IDs for Standard Store Checkout vs. Bulk / Pre-Order bookings.
+            Manage your Supabase Database Connection &amp; Formspree Email Notification Endpoints.
           </p>
         </div>
 
@@ -129,6 +262,154 @@ export const AdminSettings: React.FC = () => {
           )}
           <span>Send Test Standard Email</span>
         </button>
+      </div>
+
+      {/* SECTION 1: SUPABASE CONNECTION & DATABASE SETTINGS */}
+      <div className="bg-stone-900/90 backdrop-blur-xl border border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+          <Database className="w-48 h-48 text-emerald-400" />
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400">
+              <Database className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="font-serif text-lg font-semibold text-white flex items-center gap-2">
+                <span>Supabase Database Connection</span>
+                {supabaseConfig.isCustom && (
+                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full">Custom Override</span>
+                )}
+              </h2>
+              <p className="text-xs text-emerald-100/70">Connects products catalog, user accounts, and real-time orders.</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={runDbCheck}
+              disabled={testingDb}
+              className="px-3.5 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${testingDb ? 'animate-spin text-emerald-400' : ''}`} />
+              <span>Test Connection</span>
+            </button>
+            <button
+              onClick={handleManualSeed}
+              disabled={seedingDb}
+              className="px-3.5 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            >
+              <Zap className="w-3.5 h-3.5 text-emerald-400" />
+              <span>{seedingDb ? 'Seeding...' : 'Seed Data to Supabase'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Live Status Overview Box */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className={`p-4 rounded-2xl border ${dbStatus?.connected ? 'bg-emerald-950/40 border-emerald-500/40' : 'bg-amber-950/30 border-amber-500/30'} flex items-start gap-3`}>
+            {dbStatus?.connected ? (
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+            ) : (
+              <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            )}
+            <div>
+              <span className="text-xs font-semibold text-white block">
+                {testingDb ? 'Checking connection...' : (dbStatus?.connected ? 'Supabase Connected' : 'Local Fallback Mode')}
+              </span>
+              <p className="text-[11px] text-emerald-100/70 mt-0.5">
+                {dbStatus?.connected
+                  ? `Response latency: ${dbStatus.latencyMs}ms`
+                  : (dbStatus?.error || 'Operating with high-speed browser IndexedDB / LocalStorage.')}
+              </p>
+            </div>
+          </div>
+
+          <div className="p-4 bg-stone-950/60 rounded-2xl border border-white/10 flex items-center justify-between">
+            <div>
+              <span className="text-xs text-emerald-100/60 block">Supabase Products</span>
+              <span className="text-lg font-serif font-bold text-white">
+                {dbStatus?.productsCount !== null && dbStatus?.productsCount !== undefined ? dbStatus.productsCount : '—'}
+              </span>
+            </div>
+            <Layers className="w-5 h-5 text-emerald-400/60" />
+          </div>
+
+          <div className="p-4 bg-stone-950/60 rounded-2xl border border-white/10 flex items-center justify-between">
+            <div>
+              <span className="text-xs text-emerald-100/60 block">Supabase Orders</span>
+              <span className="text-lg font-serif font-bold text-white">
+                {dbStatus?.ordersCount !== null && dbStatus?.ordersCount !== undefined ? dbStatus.ordersCount : '—'}
+              </span>
+            </div>
+            <Activity className="w-5 h-5 text-emerald-400/60" />
+          </div>
+        </div>
+
+        {/* Form to Update Supabase URL and Anon Key */}
+        <form onSubmit={handleSaveSupabaseConfig} className="space-y-4 pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-emerald-200/90 mb-1.5 flex items-center gap-1.5">
+                <Database className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Supabase Project URL</span>
+              </label>
+              <input
+                type="url"
+                value={customUrlInput}
+                onChange={(e) => setCustomUrlInput(e.target.value)}
+                placeholder="https://your-project.supabase.co"
+                className="w-full bg-stone-950/80 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-400 font-mono"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-emerald-200/90 mb-1.5 flex items-center gap-1.5">
+                <KeyRound className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Supabase Anon / Publishable Key</span>
+              </label>
+              <input
+                type="text"
+                value={customKeyInput}
+                onChange={(e) => setCustomKeyInput(e.target.value)}
+                placeholder="sb_publishable_... or anon key"
+                className="w-full bg-stone-950/80 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-400 font-mono"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div className="flex items-center gap-2">
+              <button
+                type="submit"
+                className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-stone-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+              >
+                Save Supabase Credentials
+              </button>
+              {supabaseConfig.isCustom && (
+                <button
+                  type="button"
+                  onClick={handleResetSupabaseConfig}
+                  className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white text-xs font-medium rounded-xl transition-all cursor-pointer border border-white/10"
+                >
+                  Reset Default Credentials
+                </button>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleCopySqlScript}
+              className="px-4 py-2.5 bg-stone-950 border border-emerald-500/30 hover:border-emerald-400 text-emerald-300 text-xs font-semibold rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+            >
+              {copiedSql ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+              <span>{copiedSql ? 'SQL Schema Copied' : 'Copy Supabase SQL Setup Script'}</span>
+            </button>
+          </div>
+        </form>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -307,4 +588,5 @@ export const AdminSettings: React.FC = () => {
     </div>
   );
 };
+
 
