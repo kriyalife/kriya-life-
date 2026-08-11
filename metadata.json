@@ -1,0 +1,8 @@
+{
+  "name": "Remix KRIYA",
+  "description": "Vibrant, responsive cosmetics store featuring curated botanical formulations, live search & category filters, interactive skin quiz, cart management, instant checkout, order tracking, and an admin dashboard for KRIYA Life Science.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

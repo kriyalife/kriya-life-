@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Login</title>
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabase = createClient(
+      "https://ybhvdyrwylkeyirizenc.supabase.co",
+      "sb_publishable_TvHcUPQI33Aq4QdYadtI3g_vRHgFA4S"
+    );
+
+    window.signup = async () => {
+      if (!document.getElementById("email").value || !document.getElementById("password").value) {
+        alert("Email and password are required.");
+        return;
+      }
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const name = document.getElementById("name").value;
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (data.user) {
+        await supabase.from("profiles").insert([
+          {
+            id: data.user.id,
+            name: name,
+            email: email
+          }
+        ]);
+        alert("Signup Success ✅ (If email confirmation is enabled in Supabase, please check your inbox to confirm before logging in)");
+      } else if (error) {
+        alert("Signup Failed ❌: " + error.message);
+      }
+    };
+
+    window.login = async () => {
+      if (!document.getElementById("email").value || !document.getElementById("password").value) {
+        alert("Email and password are required.");
+        return;
+      }
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        if (error.message.includes("Email not confirmed")) {
+          alert("Login Failed ❌\nEmail not confirmed.\n\nIf you just disabled email confirmations in Supabase, you must create a NEW account. Existing accounts still require confirmation.");
+        } else {
+          alert("Login Failed ❌: " + error.message);
+        }
+      } else {
+        alert("Login Success ✅");
+        window.location.href = "profile.html";
+      }
+    };
+      window.onload = () => {
+      setTimeout(() => {
+        const emailEl = document.getElementById("email");
+        if (emailEl) emailEl.value = "";
+        const pwdEl = document.getElementById("password");
+        if (pwdEl) pwdEl.value = "";
+      }, 100);
+    };
+  </script>
+</head>
+
+<body>
+<h2>User Login / Signup</h2>
+
+<button type="button" onclick="window.history.back()" style="margin-bottom: 20px;">&larr; Back</button>
+
+<form autocomplete="off" onsubmit="event.preventDefault();">
+<input type="text" style="display:none">
+<input type="password" style="display:none">
+<input id="name" placeholder="Name"><br><br>
+<input id="email" type="email" placeholder="Email" autocomplete="off"><br><br>
+<input id="password" type="password" placeholder="Password" autocomplete="new-password"><br><br>
+
+<button type="button" onclick="signup()">Signup</button>
+<button type="button" onclick="login()">Login</button>
+</form>
+
+</body>
+</html>

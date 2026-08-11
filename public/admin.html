@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>KRIYA Admin</title>
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabase = createClient(
+      "https://ybhvdyrwylkeyirizenc.supabase.co",
+      "sb_publishable_TvHcUPQI33Aq4QdYadtI3g_vRHgFA4S"
+    );
+
+    // 🔐 LOGIN WITH SUPABASE
+    window.login = async () => {
+      if (!document.getElementById("email").value || !document.getElementById("password").value) {
+        alert("Email and password are required.");
+        return;
+      }
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        if (error.message.includes("Email not confirmed")) {
+          alert("Login Failed ❌\nEmail not confirmed.\n\nIf you just disabled email confirmations in Supabase, you must create a NEW account. Existing accounts still require confirmation.");
+        } else {
+          alert("Login Failed ❌: " + error.message);
+        }
+      } else {
+        alert("Login Success ✅");
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("panel").style.display = "block";
+        loadProducts();
+        loadOrders();
+        loadDashboard();
+      }
+    };
+
+    // 🔓 CHECK SESSION (AUTO LOGIN)
+    async function checkUser() {
+      const { data } = await supabase.auth.getUser();
+
+      if (data.user) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("panel").style.display = "block";
+        loadProducts();
+        loadOrders();
+        loadDashboard();
+      }
+    }
+
+    checkUser();
+
+    async function loadProducts() {
+      const res = await fetch("/products"); const data = await res.json();
+      const div = document.getElementById("products");
+      div.innerHTML = "";
+
+      data.forEach(p => {
+        div.innerHTML += `
+          <div style="border:1px solid #ddd; padding:10px; margin:10px;">
+            <img src="${p.image}" width="80"/>
+            <b>${p.name}</b> - ₹${p.price}
+            <button onclick="deleteProduct('${p.id}')">Delete</button>
+          </div>
+        `;
+      });
+    }
+
+    async function uploadImage(file) {
+      const fileName = Date.now() + "-" + file.name;
+
+      const { data, error } = await supabase.storage
+        .from("products")
+        .upload(fileName, file);
+
+      if (error) {
+        alert("Upload Failed ❌");
+        return null;
+      }
+
+      const { data: publicUrlData } = supabase
+        .storage
+        .from("products")
+        .getPublicUrl(fileName);
+
+      return publicUrlData.publicUrl;
+    }
+
+    window.addProduct = async () => {
+      const name = document.getElementById("name").value;
+      const desc = document.getElementById("desc").value;
+      const price = document.getElementById("price").value;
+      const file = document.getElementById("file").files[0];
+
+      let imageUrl = "";
+
+      if (file) {
+        imageUrl = await uploadImage(file);
+      }
+
+      await fetch("/add-product", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "admin": "true" },
+        body: JSON.stringify({ name, price, description: desc, image: imageUrl })
+      });
+
+      alert("Product Added ✅");
+      loadProducts();
+    };
+
+    window.deleteProduct = async (id) => {
+      await fetch(`/delete-product/${id}`, { method: "DELETE", headers: { "admin": "true" } });
+      loadProducts();
+    };
+
+    async function loadOrders() {
+      const res = await fetch("/orders", { headers: { "admin": "true" } }); const data = await res.json();
+      const div = document.getElementById("orders");
+      div.innerHTML = "";
+
+      data.forEach(o => {
+        div.innerHTML += `
+          <div>
+            ₹${o.price} | ${o.customer_email}
+          </div>
+        `;
+      });
+    }
+
+    async function loadDashboard() {
+      const resOrd = await fetch("/orders", { headers: { "admin": "true" } }); const orders = await resOrd.json();
+      const resProd = await fetch("/products"); const products = await resProd.json();
+
+      let totalSales = 0;
+
+      orders.forEach(o => {
+        totalSales += Number(o.price);
+      });
+
+      document.getElementById("stats").innerHTML = `
+        <div>Total Orders: ${orders.length}</div>
+        <div>Total Products: ${products.length}</div>
+        <div>Total Sales: ₹${totalSales}</div>
+      `;
+    }
+
+    window.logout = async () => {
+      await supabase.auth.signOut();
+      location.reload();
+    };
+      window.onload = () => {
+      setTimeout(() => {
+        const emailEl = document.getElementById("email");
+        if (emailEl) emailEl.value = "";
+        const pwdEl = document.getElementById("password");
+        if (pwdEl) pwdEl.value = "";
+      }, 100);
+    };
+  </script>
+</head>
+
+<body>
+
+<!-- 🔐 LOGIN -->
+<div id="loginBox">
+  <button type="button" onclick="window.history.back()" style="margin-bottom: 20px;">&larr; Back</button>
+  <h2>Admin Login</h2>
+  <form autocomplete="off" onsubmit="event.preventDefault(); login();">
+    <input type="text" style="display:none">
+    <input type="password" style="display:none">
+    <input id="email" type="email" placeholder="Email" autocomplete="off"><br><br>
+    <input id="password" type="password" placeholder="Password" autocomplete="new-password"><br><br>
+    <button type="submit">Login</button>
+  </form>
+</div>
+
+<!-- 🛠️ ADMIN PANEL -->
+<div id="panel" style="display:none;">
+
+  <h2>Admin Panel</h2>
+  <button onclick="logout()">Logout</button>
+
+  <h3>Dashboard</h3>
+  <div id="stats"></div>
+
+  <h3>Add Product</h3>
+  <input id="name" placeholder="Name"><br>
+  <input id="desc" placeholder="Description"><br>
+  <input id="price" placeholder="Price"><br>
+  <input id="image" placeholder="Image URL"><br>
+  <input type="file" id="file"><br>
+  <button onclick="addProduct()">Add Product</button>
+
+  <h3>Products</h3>
+  <div id="products"></div>
+
+  <h3>Orders</h3>
+  <div id="orders"></div>
+
+</div>
+
+</body>
+</html>

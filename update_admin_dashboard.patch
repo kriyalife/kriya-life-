@@ -1,0 +1,98 @@
+--- src/components/admin/AdminDashboard.tsx
++++ src/components/admin/AdminDashboard.tsx
+@@ -9,6 +9,7 @@
+ import { DashboardOverview } from './DashboardOverview';
+ import { OrdersManager } from './OrdersManager';
+ import { ProductsManager } from './ProductsManager';
+ import { ReviewsManager } from './ReviewsManager';
++import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+ 
+ interface AdminDashboardProps {
+   onLogout: () => void;
+@@ -16,8 +17,9 @@
+ }
+ 
+ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, adminEmail }) => {
+-  const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'products' | 'reviews' | 'customers' | 'settings'>('dashboard');
+   const [sidebarOpen, setSidebarOpen] = useState(false);
++  const navigate = useNavigate();
++  const location = useLocation();
+ 
+   const menuItems = [
+     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+@@ -27,24 +29,9 @@
+     { id: 'settings', label: 'Settings', icon: Settings },
+   ] as const;
+ 
+-  const renderContent = () => {
+-    switch (activeTab) {
+-      case 'dashboard':
+-        return <DashboardOverview />;
+-      case 'orders':
+-        return <OrdersManager />;
+-      case 'products':
+-        return <ProductsManager />;
+-      case 'reviews':
+-        return <ReviewsManager />;
+-      case 'customers':
+-      case 'settings':
+-        return (
+-          <div className="flex flex-col items-center justify-center h-full text-stone-400 space-y-4 pt-20">
+-            <Settings className="w-16 h-16 opacity-20" />
+-            <h2 className="text-xl font-serif text-stone-600">Module Under Development</h2>
+-            <p className="text-sm">This section is being prepared for the next release.</p>
+-          </div>
+-        );
+-      default:
+-        return null;
+-    }
+-  };
++  // Derive active tab from URL path
++  const currentPath = location.pathname;
++  const getActiveTabId = () => {
++    const match = menuItems.find(m => currentPath.includes(`/admin/${m.id}`));
++    return match ? match.id : 'dashboard';
++  };
++  const activeTabId = getActiveTabId();
+ 
+   return (
+     <div className="flex h-screen bg-[#F4F7F5] overflow-hidden font-sans">
+@@ -74,8 +61,8 @@
+             {menuItems.map((item) => (
+               <button
+                 key={item.id}
+-                onClick={() => { setActiveTab(item.id); setSidebarOpen(false); }}
+-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${
+-                  activeTab === item.id
++                onClick={() => { navigate(`/admin/${item.id}`); setSidebarOpen(false); }}
++                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${
++                  activeTabId === item.id
+                     ? 'bg-[#153323] text-white shadow-md'
+                     : 'text-stone-600 hover:bg-stone-200/50 hover:text-[#153323]'
+                 }`}
+@@ -107,7 +94,21 @@
+ 
+       {/* Main Content Area */}
+       <div className="flex-1 flex flex-col h-full overflow-hidden w-full">
+-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 hide-scrollbar">
+-          {renderContent()}
++        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 hide-scrollbar">
++          <Routes>
++            <Route path="/" element={<DashboardOverview />} />
++            <Route path="/dashboard" element={<DashboardOverview />} />
++            <Route path="/orders" element={<OrdersManager />} />
++            <Route path="/products" element={<ProductsManager />} />
++            <Route path="/add-product" element={<div className="p-8"><h1>Add Product Form Goes Here</h1></div>} />
++            <Route path="/edit-product" element={<div className="p-8"><h1>Edit Product Form Goes Here</h1></div>} />
++            <Route path="/users" element={<div className="p-8"><h1>Users Management Goes Here</h1></div>} />
++            <Route path="/reviews" element={<ReviewsManager />} />
++            <Route path="*" element={
++              <div className="flex flex-col items-center justify-center h-full text-stone-400 space-y-4 pt-20">
++                <Settings className="w-16 h-16 opacity-20" />
++                <h2 className="text-xl font-serif text-stone-600">Module Under Development</h2>
++                <p className="text-sm">This section is being prepared for the next release.</p>
++              </div>
++            } />
++          </Routes>
+         </main>
+       </div>
