@@ -3,7 +3,7 @@ import { useShop } from '../context/ShopContext';
 import { Sparkles, ArrowRight, ShieldCheck, Leaf, Droplet, ShoppingBag, Star, Check } from 'lucide-react';
 import { motion } from 'motion/react';
 import heroBgImage from '../assets/images/regenerated_image_1784986939391.png';
-import comboHeroNewImg from '../assets/images/regenerated_image_1786438952741.jpg';
+import comboHeroNewImg from '../assets/images/regenerated_image_1786447986783.jpg';
 
 export const Hero: React.FC = () => {
   const { products, addToCart, setSelectedProduct, setSelectedCategory, setIsSkinQuizOpen, setIsCartOpen } = useShop();

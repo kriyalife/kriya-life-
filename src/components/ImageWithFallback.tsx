@@ -9,8 +9,16 @@ const DEFAULT_FALLBACK = 'https://images.unsplash.com/photo-1620916566398-39f114
 const sanitizeSrc = (source?: string, fallback: string = DEFAULT_FALLBACK): string => {
   if (!source || typeof source !== 'string') return fallback;
   let trimmed = source.trim();
+  if (trimmed.startsWith('data:image/svg+xml;utf8,')) {
+    trimmed = 'data:image/svg+xml;charset=utf-8,' + trimmed.slice('data:image/svg+xml;utf8,'.length);
+  }
   if (trimmed.startsWith('./')) {
     trimmed = '/' + trimmed.slice(2);
+  }
+  if (trimmed.startsWith('/src/assets/images/')) {
+    trimmed = trimmed.replace('/src/assets/images/', '/images/');
+  } else if (trimmed.startsWith('/src/assets/')) {
+    trimmed = trimmed.replace('/src/assets/', '/');
   }
   return trimmed || fallback;
 };

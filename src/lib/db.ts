@@ -315,16 +315,21 @@ export const fetchProductsFromSupabase = async (): Promise<any[]> => {
 
       let images: string[] = rawImages.map((imgUrl, idx) => {
         if (!imgUrl || typeof imgUrl !== 'string') return '';
+        let cleanUrl = imgUrl.trim();
+        if (cleanUrl.startsWith('data:image/svg+xml;utf8,')) {
+          cleanUrl = 'data:image/svg+xml;charset=utf-8,' + cleanUrl.slice('data:image/svg+xml;utf8,'.length);
+        }
         // If it's a dev path (/src/assets/, @fs/, blob:) replace with default product image if available
-        if (imgUrl.startsWith('/src/assets/') || imgUrl.startsWith('@fs/') || imgUrl.startsWith('blob:')) {
+        if (cleanUrl.startsWith('/src/assets/') || cleanUrl.startsWith('@fs/') || cleanUrl.startsWith('blob:')) {
           if (defaultProd && defaultProd.images && defaultProd.images[idx]) {
             return defaultProd.images[idx];
           }
           if (defaultProd && defaultProd.images && defaultProd.images[0]) {
             return defaultProd.images[0];
           }
+          cleanUrl = cleanUrl.replace('/src/assets/images/', '/images/').replace('/src/assets/', '/');
         }
-        return imgUrl;
+        return cleanUrl;
       }).filter(Boolean);
 
       if (images.length === 0 && defaultProd && defaultProd.images) {
