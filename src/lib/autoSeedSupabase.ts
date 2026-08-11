@@ -79,7 +79,7 @@ export async function autoSeedSupabase() {
           customer_name: 'Ananya Sharma',
           customer_email: 'ananya.sharma@example.com',
           user_email: 'ananya.sharma@example.com',
-          phone: '+91 98234 56789',
+          phone: '+91 7405500454',
           address: 'B-202 Lotus Park, Bandra West, Mumbai, Maharashtra 400050',
           shipping_address: 'B-202 Lotus Park, Bandra West, Mumbai, Maharashtra 400050',
           product_name: 'Olive Night Cream (30g)',

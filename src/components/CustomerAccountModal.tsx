@@ -227,7 +227,7 @@ export const CustomerAccountModal: React.FC<CustomerAccountModalProps> = ({ isOp
               <p className="text-xs font-medium text-white pt-1">{currentUser?.name || 'Aarav Sharma'}</p>
               <p className="text-xs text-emerald-100/70">42 Lotus Garden, Jubilee Hills</p>
               <p className="text-xs text-emerald-100/70">Hyderabad, Telangana 500033 — India</p>
-              <p className="text-xs text-emerald-100/70 pt-1">Phone: +91 98765 43210</p>
+              <p className="text-xs text-emerald-100/70 pt-1">Phone: +91 7405500454</p>
             </div>
           )}
         </div>

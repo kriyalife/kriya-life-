@@ -163,6 +163,51 @@ export const PRODUCTS: Product[] = [
         verified: true
       }
     ]
+  },
+  {
+    id: 'kriya-trial-sample-1rs',
+    name: 'Kriya Express Trial Pack',
+    tagline: '1 Rupee Special Trial Pack — Pure Botanical Sample',
+    category: 'Special Offers',
+    price: 1,
+    originalPrice: 99,
+    rating: 5.0,
+    reviewsCount: 38,
+    isBestseller: false,
+    isOrganic: true,
+    isNew: true,
+    volume: '10ml Sample',
+    inStock: true,
+    skinTypes: ['All Skin Types'],
+    description: 'Special 1 Rupee trial pack! Test and experience the instant glow of Kriya pure botanical formulation with this 10ml mini trial pack.',
+    ingredients: [
+      'Pure Aloe Vera Juice',
+      'Botanical Extract Blend',
+      'Vitamin C',
+      'Natural Essential Oils'
+    ],
+    howToUse: 'Apply a small amount to clean skin to test the gentle botanical formula.',
+    images: [
+      PRODUCT_2_IMAGE,
+      VITAMIN_C_FACEWASH_IMAGE,
+      OLIVE_SOUFFLE_CREAM_IMAGE
+    ],
+    media: [
+      { type: 'image', src: PRODUCT_2_IMAGE, alt: 'Kriya 1 Rupee Express Trial Pack' },
+      { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE, alt: 'Vitamin C Cleanser Sample' },
+      { type: 'image', src: OLIVE_SOUFFLE_CREAM_IMAGE, alt: 'Olive Souffle Sample' }
+    ],
+    reviews: [
+      {
+        id: 'r5',
+        userName: 'Vikram Dave',
+        rating: 5,
+        date: '2026-08-10',
+        title: 'Great trial offer!',
+        comment: 'Got this for 1 rupee to test the formula. Absolutely loved the gentle texture and fragrance.',
+        verified: true
+      }
+    ]
   }
 ];
 
