@@ -382,7 +382,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
       )}
 
       {/* Amazon & Flipkart Style Trust Badges Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-2">
         <div className="flex items-center gap-2.5 p-3 bg-stone-900/60 rounded-2xl border border-white/10">
           <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
           <div className="text-left">
@@ -396,14 +396,6 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
           <div className="text-left">
             <p className="text-[11px] font-bold text-white leading-tight">Express Delivery</p>
             <p className="text-[9px] text-emerald-100/60">Ships in 24 Hours</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2.5 p-3 bg-stone-900/60 rounded-2xl border border-white/10">
-          <RotateCcw className="w-5 h-5 text-emerald-400 shrink-0" />
-          <div className="text-left">
-            <p className="text-[11px] font-bold text-white leading-tight">7 Days Return</p>
-            <p className="text-[9px] text-emerald-100/60">Hassle-Free Exchange</p>
           </div>
         </div>
 

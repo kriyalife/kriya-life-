@@ -19,7 +19,7 @@ interface VideoMedia {
 const MEDIA: VideoMedia[] = [
   { 
     type: 'video', 
-    src: "/video-1.mp4", 
+    src: "/video1.mp4", 
     title: "Vitamin C Face Wash Routine", 
     reviewer: "Priya S.", 
     tag: "Face Wash Cleanse", 
@@ -29,7 +29,7 @@ const MEDIA: VideoMedia[] = [
   },
   { 
     type: 'video', 
-    src: "/video-2.mp4", 
+    src: "/video2.mp4", 
     title: "Morning Fresh Glow Cleanse", 
     reviewer: "Ananya M.", 
     tag: "Morning Routine", 
@@ -39,7 +39,7 @@ const MEDIA: VideoMedia[] = [
   },
   { 
     type: 'video', 
-    src: "/video-3.mp4", 
+    src: "/video3.mp4", 
     title: "Overnight Repair & Hydration", 
     reviewer: "Meera R.", 
     tag: "Night Routine", 

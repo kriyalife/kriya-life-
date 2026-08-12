@@ -13,7 +13,26 @@ export interface ProductInput {
 export const uploadImage = async (file: File): Promise<string> => {
   const name = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
   
-  // Primary attempt: 'products' bucket
+  // Primary attempt: 'media' bucket
+  try {
+    const { error } = await supabase.storage
+      .from('media')
+      .upload(name, file, { cacheControl: '3600', upsert: true });
+
+    if (error) {
+      console.error("Upload error:", error);
+    } else {
+      const { data: urlData } = supabase.storage.from('media').getPublicUrl(name);
+      if (urlData?.publicUrl) {
+        console.log("Image URL:", urlData.publicUrl);
+        return urlData.publicUrl;
+      }
+    }
+  } catch (err) {
+    console.error("Upload error:", err);
+  }
+
+  // Secondary attempt: 'products' bucket
   try {
     const { error } = await supabase.storage
       .from('products')
@@ -27,20 +46,6 @@ export const uploadImage = async (file: File): Promise<string> => {
     }
   } catch (err) {
     console.warn('Notice uploading to "products" bucket:', err);
-  }
-
-  // Secondary attempt: 'products-images' bucket
-  try {
-    const { error } = await supabase.storage
-      .from('products-images')
-      .upload(name, file, { cacheControl: '3600', upsert: true });
-
-    if (!error) {
-      const publicUrl = supabase.storage.from('products-images').getPublicUrl(name).data.publicUrl;
-      if (publicUrl) return publicUrl;
-    }
-  } catch (err) {
-    console.warn('Notice uploading to "products-images" bucket:', err);
   }
 
   // Fallback to Base64 Data URL so upload never breaks UX
@@ -57,6 +62,23 @@ export const uploadImage = async (file: File): Promise<string> => {
 export const uploadVideo = async (file: File): Promise<string> => {
   try {
     const name = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    
+    // Primary attempt: 'media' bucket
+    const { error: mediaError } = await supabase.storage
+      .from('media')
+      .upload(name, file);
+
+    if (!mediaError) {
+      const { data: urlData } = supabase.storage.from('media').getPublicUrl(name);
+      if (urlData?.publicUrl) {
+        console.log("Video URL:", urlData.publicUrl);
+        return urlData.publicUrl;
+      }
+    } else {
+      console.error("Upload error:", mediaError);
+    }
+    
+    // Secondary attempt: 'products' bucket
     const { error } = await supabase.storage
       .from('products')
       .upload(name, file);

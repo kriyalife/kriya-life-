@@ -1,8 +1,16 @@
 import { Product } from '../types';
 import { 
-  VITAMIN_C_FACEWASH_IMAGE, 
-  OLIVE_SOUFFLE_CREAM_IMAGE, 
-  COMBO_DUO_IMAGE,
+  VITAMIN_C_FACEWASH_IMAGE1,
+  VITAMIN_C_FACEWASH_IMAGE2,
+  VITAMIN_C_FACEWASH_IMAGE3,
+  NIGHT_CREAM_IMAGE1,
+  NIGHT_CREAM_IMAGE2,
+  NIGHT_CREAM_IMAGE3,
+  NIGHT_CREAM_IMAGE4,
+COMBO_DUO_IMAGE1,
+  COMBO_DUO_IMAGE2,
+  COMBO_DUO_IMAGE3,
+  COMBO_DUO_IMAGE4,
   PRODUCT_2_IMAGE
 } from './productImages';
 
@@ -35,15 +43,19 @@ export const PRODUCTS: Product[] = [
     ],
     howToUse: 'Dampen your face with lukewarm water. Squeeze a pea-sized amount onto wet palms, gently massage in upward circular motions for 60 seconds, and rinse thoroughly with clean water.',
     images: [
-      VITAMIN_C_FACEWASH_IMAGE,
+      VITAMIN_C_FACEWASH_IMAGE3,
+      VITAMIN_C_FACEWASH_IMAGE1,
+      VITAMIN_C_FACEWASH_IMAGE2,
       PRODUCT_2_IMAGE,
       'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&q=80&w=800'
     ],
     media: [
-      { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE, alt: 'Kriya Vitamin C Face Wash 100ml Tube' },
+      { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE3, alt: 'Kriya Vitamin C Face Wash 100ml Tube' },
+      { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE1, alt: 'Kriya Vitamin C Face Wash 100ml Tube' },
+      { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE2, alt: 'Kriya Vitamin C Face Wash 100ml Tube' },
       { type: 'image', src: PRODUCT_2_IMAGE, alt: 'Kriya Vitamin C Face Wash Detail View' },
-      { type: 'video', src: '/video-1.mp4', alt: 'Vitamin C Cleansing Routine' },
-      { type: 'video', src: '/video-2.mp4', alt: 'Morning Fresh Cleanse Demo' }
+      { type: 'video', src: '/video1.mp4', alt: 'Vitamin C Cleansing Routine' },
+      { type: 'video', src: '/video2.mp4', alt: 'Morning Fresh Cleanse Demo' }
     ],
     reviews: [
       {
@@ -94,14 +106,20 @@ export const PRODUCTS: Product[] = [
     ],
     howToUse: 'Scoop a pearl-sized amount with clean fingertips. Warm between palms and press gently into cleansed face and neck every evening before sleep.',
     images: [
-      OLIVE_SOUFFLE_CREAM_IMAGE,
-      PRODUCT_2_IMAGE,
+      NIGHT_CREAM_IMAGE1,
+      NIGHT_CREAM_IMAGE2,
+      NIGHT_CREAM_IMAGE3,
+      NIGHT_CREAM_IMAGE4,
+PRODUCT_2_IMAGE,
       'https://images.unsplash.com/photo-1567928269937-251d1469e7f7?auto=format&fit=crop&q=80&w=800'
     ],
     media: [
-      { type: 'image', src: OLIVE_SOUFFLE_CREAM_IMAGE, alt: 'Kriya Olive Night Cream 30g Jar' },
+      { type: 'image', src: NIGHT_CREAM_IMAGE1, alt: 'Kriya Olive Night Cream 30g Jar' },
+      { type: 'image', src: NIGHT_CREAM_IMAGE2, alt: 'Kriya Olive Night Cream Side' },
+      { type: 'image', src: NIGHT_CREAM_IMAGE3, alt: 'Kriya Olive Night Cream Detailed' },
+      { type: 'image', src: NIGHT_CREAM_IMAGE4, alt: 'Kriya Olive Night Cream Top' },
       { type: 'image', src: PRODUCT_2_IMAGE, alt: 'Kriya Olive Night Cream Detail View' },
-      { type: 'video', src: '/video-3.mp4', alt: 'Overnight Night Cream Ritual' },
+      { type: 'video', src: '/video3.mp4', alt: 'Overnight Night Cream Ritual' },
       { type: 'video', src: '/video-5.mp4', alt: 'Night Care Application Guide' }
     ],
     reviews: [
@@ -138,18 +156,25 @@ export const PRODUCTS: Product[] = [
     ],
     howToUse: 'Use Vitamin C Face Wash every morning & evening. Apply Olive Night Cream every night after washing.',
     images: [
-      COMBO_DUO_IMAGE,
-      PRODUCT_2_IMAGE,
-      VITAMIN_C_FACEWASH_IMAGE,
-      OLIVE_SOUFFLE_CREAM_IMAGE
+      COMBO_DUO_IMAGE1,
+      COMBO_DUO_IMAGE2,
+      COMBO_DUO_IMAGE3,
+      COMBO_DUO_IMAGE4,
+      VITAMIN_C_FACEWASH_IMAGE1,
+      NIGHT_CREAM_IMAGE1,
+  NIGHT_CREAM_IMAGE2,
+  NIGHT_CREAM_IMAGE3,
+  NIGHT_CREAM_IMAGE4
     ],
     media: [
-      { type: 'image', src: COMBO_DUO_IMAGE, alt: 'Kriya Complete Glow & Renew Combo Duo' },
-      { type: 'image', src: PRODUCT_2_IMAGE, alt: 'Kriya Botanical Skincare Collection' },
-      { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE, alt: 'Vitamin C Face Wash 100ml' },
-      { type: 'image', src: OLIVE_SOUFFLE_CREAM_IMAGE, alt: 'Olive Souffle Cream 30g' },
-      { type: 'video', src: '/video-6.mp4', alt: 'Vitamin C Radiance Boost' },
-      { type: 'video', src: '/video-7.mp4', alt: 'Deep Moisture Restore' }
+      { type: 'image', src: COMBO_DUO_IMAGE1, alt: 'Kriya Complete Glow & Renew Combo Duo' },
+      { type: 'image', src: COMBO_DUO_IMAGE2, alt: 'Kriya Complete Glow & Renew Combo Duo - Side' },
+      { type: 'image', src: COMBO_DUO_IMAGE3, alt: 'Kriya Complete Glow & Renew Combo Duo - Detailed' },
+      { type: 'image', src: COMBO_DUO_IMAGE4, alt: 'Kriya Complete Glow & Renew Combo Duo - Close' },
+      { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE1, alt: 'Vitamin C Face Wash 100ml' },
+      { type: 'image', src: NIGHT_CREAM_IMAGE1, alt: 'Olive Souffle Cream 30g' },
+      { type: 'video', src: '/videos/video-6.mp4', alt: 'Vitamin C Radiance Boost' },
+      { type: 'video', src: '/videos/video-7.mp4', alt: 'Deep Moisture Restore' }
     ],
 
     reviews: [
@@ -160,51 +185,6 @@ export const PRODUCTS: Product[] = [
         date: '2026-08-01',
         title: 'Unbeatable Value & Quality',
         comment: 'Buying this combo saves over 40%! Both products complement each other seamlessly for round-the-clock skincare.',
-        verified: true
-      }
-    ]
-  },
-  {
-    id: 'kriya-trial-sample-1rs',
-    name: 'Kriya Express Trial Pack',
-    tagline: '1 Rupee Special Trial Pack — Pure Botanical Sample',
-    category: 'Special Offers',
-    price: 1,
-    originalPrice: 99,
-    rating: 5.0,
-    reviewsCount: 38,
-    isBestseller: false,
-    isOrganic: true,
-    isNew: true,
-    volume: '10ml Sample',
-    inStock: true,
-    skinTypes: ['All Skin Types'],
-    description: 'Special 1 Rupee trial pack! Test and experience the instant glow of Kriya pure botanical formulation with this 10ml mini trial pack.',
-    ingredients: [
-      'Pure Aloe Vera Juice',
-      'Botanical Extract Blend',
-      'Vitamin C',
-      'Natural Essential Oils'
-    ],
-    howToUse: 'Apply a small amount to clean skin to test the gentle botanical formula.',
-    images: [
-      PRODUCT_2_IMAGE,
-      VITAMIN_C_FACEWASH_IMAGE,
-      OLIVE_SOUFFLE_CREAM_IMAGE
-    ],
-    media: [
-      { type: 'image', src: PRODUCT_2_IMAGE, alt: 'Kriya 1 Rupee Express Trial Pack' },
-      { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE, alt: 'Vitamin C Cleanser Sample' },
-      { type: 'image', src: OLIVE_SOUFFLE_CREAM_IMAGE, alt: 'Olive Souffle Sample' }
-    ],
-    reviews: [
-      {
-        id: 'r5',
-        userName: 'Vikram Dave',
-        rating: 5,
-        date: '2026-08-10',
-        title: 'Great trial offer!',
-        comment: 'Got this for 1 rupee to test the formula. Absolutely loved the gentle texture and fragrance.',
         verified: true
       }
     ]
