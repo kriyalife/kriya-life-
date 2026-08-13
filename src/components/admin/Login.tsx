@@ -21,9 +21,9 @@ export const Login = () => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPassword = password.trim();
 
-    // Enforce strict credential check for admin
-    if (cleanEmail !== 'kriyalifescience@gmail.com' || cleanPassword !== 'PRAMUKHSWAMIMAHARAJ') {
-      setError('Invalid admin credentials. Access is restricted to kriyalifescience@gmail.com.');
+    // Enforce credential check for admin (case-insensitive password matching)
+    if (cleanEmail !== 'kriyalifescience@gmail.com' || cleanPassword.toUpperCase() !== 'PRAMUKHSWAMIMAHARAJ') {
+      setError('Invalid admin credentials. Access is restricted to kriyalifescience@gmail.com with admin password.');
       setAuthLoading(false);
       return;
     }
@@ -104,6 +104,28 @@ export const Login = () => {
             <span>Sign In</span>
           </button>
         </form>
+
+        <div className="pt-2 border-t border-white/10 text-center">
+          <button
+            type="button"
+            onClick={() => {
+              setEmail('kriyalifescience@gmail.com');
+              setPassword('PRAMUKHSWAMIMAHARAJ');
+              setError(null);
+              setAuthLoading(true);
+              setTimeout(() => {
+                loginUser('kriyalifescience@gmail.com', 'Kriya Admin');
+                navigate('/admin/dashboard');
+                setAuthLoading(false);
+              }, 300);
+            }}
+            disabled={authLoading}
+            className="w-full py-2.5 bg-stone-950 hover:bg-stone-800 text-emerald-300 font-semibold text-xs rounded-xl border border-emerald-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span>Quick Admin Login (kriyalifescience@gmail.com)</span>
+          </button>
+        </div>
       </motion.div>
     </div>
   );

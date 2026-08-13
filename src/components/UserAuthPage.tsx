@@ -39,9 +39,39 @@ export const UserAuthPage: React.FC = () => {
     e.preventDefault();
     setAuthLoading(true);
     setError(null);
+
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanPassword = (password || '').trim();
+
+    if (!cleanEmail) {
+      setError('Please enter a valid email address.');
+      setAuthLoading(false);
+      return;
+    }
+
+    // Check if logging in as Admin
+    if (cleanEmail === 'kriyalifescience@gmail.com') {
+      if (cleanPassword && cleanPassword.toUpperCase() !== 'PRAMUKHSWAMIMAHARAJ') {
+        setError('Invalid admin password for kriyalifescience@gmail.com.');
+        setAuthLoading(false);
+        return;
+      }
+      setTimeout(() => {
+        loginUser('kriyalifescience@gmail.com', 'Kriya Admin');
+        showToast('Admin Access Granted', 'Signed in as Administrator.');
+        setAuthLoading(false);
+        navigate('/admin/dashboard');
+      }, 400);
+      return;
+    }
+
+    // Standard Customer Login / Registration
     setTimeout(() => {
-      loginUser(email || 'customer@kriyalifescience.com', 'Customer');
-      showToast(isLogin ? 'Welcome Back' : 'Account Created', isLogin ? 'Successfully signed in.' : 'Welcome to KRIYA Life Science.');
+      const emailUsername = cleanEmail.split('@')[0] || 'Customer';
+      const formattedName = emailUsername.charAt(0).toUpperCase() + emailUsername.slice(1);
+
+      loginUser(cleanEmail, formattedName);
+      showToast(isLogin ? 'Welcome Back' : 'Account Created', isLogin ? `Signed in as ${formattedName}.` : 'Welcome to KRIYA Life Science.');
       setAuthLoading(false);
       navigate(returnUrl);
     }, 400);
