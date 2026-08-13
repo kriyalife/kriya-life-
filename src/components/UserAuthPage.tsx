@@ -15,16 +15,12 @@ export const UserAuthPage: React.FC = () => {
   
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginUser, showToast, currentUser, setCurrentView } = useShop();
+  const { loginUser, logoutUser, showToast, currentUser, setCurrentView } = useShop();
 
   const returnUrl = new URLSearchParams(location.search).get('returnUrl') || '/';
 
-  useEffect(() => {
-    // If already logged in, redirect
-    if (currentUser) {
-      navigate(returnUrl);
-    }
-  }, [currentUser, navigate, returnUrl]);
+  // Do NOT auto-redirect away if user wants to log in or switch accounts
+  // currentUser session banner will allow explicit Sign Out or switching accounts
 
   useEffect(() => {
     // Clear autofill on mount
@@ -134,6 +130,26 @@ export const UserAuthPage: React.FC = () => {
             </p>
           </div>
         </div>
+
+        {/* Active Session Notice if logged in */}
+        {currentUser && (
+          <div className="p-4 bg-emerald-950/90 border border-emerald-500/50 rounded-2xl space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <p className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400">Currently Logged In</p>
+                <p className="text-xs font-bold text-white truncate max-w-[180px] sm:max-w-[220px]">{currentUser.name}</p>
+                <p className="text-[11px] text-emerald-200/80 font-mono truncate max-w-[180px] sm:max-w-[220px]">{currentUser.email}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => logoutUser()}
+                className="px-3 py-1.5 bg-red-950 hover:bg-red-900 border border-red-500/50 text-red-200 text-xs font-bold rounded-xl transition-all cursor-pointer shrink-0 shadow-sm"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Tab Toggle Switch */}
         <div className="grid grid-cols-2 p-1 bg-stone-950 rounded-2xl border border-white/10">
