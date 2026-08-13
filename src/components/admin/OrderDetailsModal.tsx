@@ -118,6 +118,18 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
                   </thead>
                   <tbody className="divide-y divide-white/10">
                     {(() => {
+                      if (order.items_breakdown) {
+                        return order.items_breakdown.split('|').map((itemStr, idx) => {
+                          if (!itemStr.trim()) return null;
+                          return (
+                            <tr key={idx} className="hover:bg-white/5">
+                              <td colSpan={4} className="px-4 py-3 text-white text-sm whitespace-pre-wrap">
+                                {itemStr.trim()}
+                              </td>
+                            </tr>
+                          );
+                        });
+                      }
                       const qty = order.quantity || 1;
                       const orderTotal = typeof order.total_price === 'number' && order.total_price > 0
                         ? order.total_price

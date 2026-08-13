@@ -13,79 +13,35 @@ const INITIAL_VIDEOS: VideoMedia[] = [
   { 
     id: 'v1',
     type: 'video', 
-    src: "/video-1.mp4", 
-    title: "Vitamin C Face Wash Routine", 
-    reviewer: "Priya S.", 
-    tag: "Face Wash Cleanse", 
+    src: "/videos/video1.mp4", 
+    title: "Overnight Transformation Review", 
+    reviewer: "Ananya M.", 
+    tag: "Olive Night Cream", 
     rating: 5,
-    productId: "kriya-vit-c-facewash",
-    quote: "This Vitamin C Face Wash gently cleanses away dirt and excess oil without stripping moisture. My face feels clean, refreshed, and visibly glowing!"
+    productId: "kriya-night-cream",
+    quote: "I absolutely love this! KRIYA Life Science Olive Night Cream has completely transformed my skin."
   },
   { 
     id: 'v2',
     type: 'video', 
-    src: "/video-2.mp4", 
-    title: "Morning Fresh Glow Cleanse", 
-    reviewer: "Ananya M.", 
-    tag: "Morning Routine", 
+    src: "/videos/video2.mp4", 
+    title: "Vitamin C Natural Glow Cleanse", 
+    reviewer: "Priya S.", 
+    tag: "Face Wash Cleanse", 
     rating: 5,
     productId: "kriya-vit-c-facewash",
-    quote: "I start every morning with Kriya Vitamin C Face Wash. The gentle foam and subtle aroma wake up my skin instantly!"
+    quote: "Simply natural glowing! Kriya Vitamin C Face Wash gives skin an instant healthy radiance and deep refreshing cleanse."
   },
   { 
     id: 'v3',
     type: 'video', 
-    src: "/video-3.mp4", 
-    title: "Overnight Repair & Hydration", 
-    reviewer: "Meera R.", 
-    tag: "Night Routine", 
+    src: "/videos/video3.mp4", 
+    title: "Complete Botanical Beauty Ritual", 
+    reviewer: "Dr. Sneha Patel", 
+    tag: "Glow & Renew Combo", 
     rating: 5,
-    productId: "kriya-night-cream",
-    quote: "The Olive Night Cream deeply restores my skin barrier while I sleep. I wake up with smooth, plump, and deeply hydrated skin every morning."
-  },
-  { 
-    id: 'v4',
-    type: 'video', 
-    src: "/video-4.mp4", 
-    title: "Refreshing Everyday Cleanse", 
-    reviewer: "Sara K.", 
-    tag: "Unboxing & Demo", 
-    rating: 5,
-    productId: "kriya-vit-c-facewash",
-    quote: "100% natural and gentle on my skin. Doesn't leave any tightness—just soft, bright, and deeply purified skin."
-  },
-  { 
-    id: 'v5',
-    type: 'video', 
-    src: "/video-5.mp4", 
-    title: "Night Care Ritual Guide", 
-    reviewer: "Ritu D.", 
-    tag: "Night Routine", 
-    rating: 5,
-    productId: "kriya-night-cream",
-    quote: "A rich yet non-greasy night cream loaded with olive olivate & active antioxidants. Dark spots are noticeably lighter!"
-  },
-  { 
-    id: 'v6',
-    type: 'video', 
-    src: "/video-6.mp4", 
-    title: "Vitamin C Radiance Boost", 
-    reviewer: "Sneha P.", 
-    tag: "Customer Review", 
-    rating: 5,
-    productId: "kriya-vit-c-facewash",
-    quote: "Transformed my dull complexion in just 2 weeks. Vitamin C + Botanical extracts give an instant healthy radiance!"
-  },
-  { 
-    id: 'v7',
-    type: 'video', 
-    src: "/video-7.mp4", 
-    title: "Deep Moisture Restore", 
-    reviewer: "Kavita N.", 
-    tag: "Night Cream Demo", 
-    rating: 5,
-    productId: "kriya-night-cream",
-    quote: "Subtle soothing aroma, silky texture, and ultimate nourishment. My go-to night moisturizer for glowing skin!"
+    productId: "kriya-glow-renew-combo",
+    quote: "The ultimate handcrafted organic skincare duo! Vitamin C Face Wash and Olive Night Cream for round-the-clock radiance."
   }
 ];
 
@@ -799,7 +755,13 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [mediaList, setMediaList] = useState<VideoMedia[]>(() => {
     try {
       const saved = localStorage.getItem('kriya_showcase_videos');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const valid = parsed.filter(v => v.src && (v.src.includes('video1') || v.src.includes('video2') || v.src.includes('video3')));
+          if (valid.length >= 3) return valid;
+        }
+      }
     } catch {
       // ignore
     }

@@ -19,83 +19,63 @@ interface VideoMedia {
 const MEDIA: VideoMedia[] = [
   { 
     type: 'video', 
-    src: "/video1.mp4", 
-    title: "Vitamin C Face Wash Routine", 
+    src: "/videos/video1.mp4", 
+    title: "Overnight Transformation Review", 
+    reviewer: "Ananya M.", 
+    tag: "Olive Night Cream", 
+    rating: 5,
+    productId: "kriya-night-cream",
+    quote: "I absolutely love this! KRIYA Life Science Olive Night Cream has completely transformed my skin."
+  },
+  { 
+    type: 'video', 
+    src: "/videos/video2.mp4", 
+    title: "Vitamin C Natural Glow Cleanse", 
     reviewer: "Priya S.", 
     tag: "Face Wash Cleanse", 
     rating: 5,
     productId: "kriya-vit-c-facewash",
-    quote: "This Vitamin C Face Wash gently cleanses away dirt and excess oil without stripping moisture. My face feels clean, refreshed, and visibly glowing!"
+    quote: "Simply natural glowing! Kriya Vitamin C Face Wash gives skin an instant healthy radiance and deep refreshing cleanse."
   },
   { 
     type: 'video', 
-    src: "/video2.mp4", 
-    title: "Morning Fresh Glow Cleanse", 
-    reviewer: "Ananya M.", 
-    tag: "Morning Routine", 
+    src: "/videos/video3.mp4", 
+    title: "Complete Botanical Beauty Ritual", 
+    reviewer: "Dr. Sneha Patel", 
+    tag: "Glow & Renew Combo", 
     rating: 5,
-    productId: "kriya-vit-c-facewash",
-    quote: "I start every morning with Kriya Vitamin C Face Wash. The gentle foam and subtle aroma wake up my skin instantly!"
+    productId: "kriya-glow-renew-combo",
+    quote: "The ultimate handcrafted organic skincare duo! Vitamin C Face Wash and Olive Night Cream for round-the-clock radiance."
   },
   { 
     type: 'video', 
-    src: "/video3.mp4", 
-    title: "Overnight Repair & Hydration", 
+    src: "/videos/video1.mp4", 
+    title: "Overnight Moisture Barrier Repair", 
     reviewer: "Meera R.", 
     tag: "Night Routine", 
     rating: 5,
     productId: "kriya-night-cream",
-    quote: "The Olive Night Cream deeply restores my skin barrier while I sleep. I wake up with smooth, plump, and deeply hydrated skin every morning."
+    quote: "Deeply restores skin barrier while you sleep. Wake up with smooth, plump, and deeply hydrated skin every morning."
   },
   { 
     type: 'video', 
-    src: "/video-4.mp4", 
-    title: "Refreshing Everyday Cleanse", 
+    src: "/videos/video2.mp4", 
+    title: "Morning Refreshing Cleanse Demo", 
     reviewer: "Sara K.", 
-    tag: "Unboxing & Demo", 
+    tag: "Daily Routine", 
     rating: 5,
     productId: "kriya-vit-c-facewash",
-    quote: "100% natural and gentle on my skin. Doesn't leave any tightness—just soft, bright, and deeply purified skin."
+    quote: "100% natural and gentle on skin. Gently cleanses away dirt and excess oil without stripping moisture!"
   },
   { 
     type: 'video', 
-    src: "/video-5.mp4", 
-    title: "Night Care Ritual Guide", 
-    reviewer: "Ritu D.", 
-    tag: "Night Routine", 
-    rating: 5,
-    productId: "kriya-night-cream",
-    quote: "A rich yet non-greasy night cream loaded with olive olivate & active antioxidants. Dark spots are noticeably lighter!"
-  },
-  { 
-    type: 'video', 
-    src: "/video-6.mp4", 
-    title: "Vitamin C Radiance Boost", 
-    reviewer: "Sneha P.", 
-    tag: "Customer Review", 
-    rating: 5,
-    productId: "kriya-vit-c-facewash",
-    quote: "Helped fade my dullness and sun tan in under two weeks. The combination of Vitamin C and Niacinamide is super effective!"
-  },
-  { 
-    type: 'video', 
-    src: "/video-7.mp4", 
-    title: "Wake Up Glowing Ritual", 
-    reviewer: "Tanya B.", 
-    tag: "Application", 
-    rating: 5,
-    productId: "kriya-night-cream",
-    quote: "Applies like silk and absorbs effortlessly. My holy grail nocturnal skin nourishment product!"
-  },
-  { 
-    type: 'video', 
-    src: "/vlog-skincare-routine.mp4", 
-    title: "Daily Vitamin C Cleansing Vlog", 
+    src: "/videos/video3.mp4", 
+    title: "Organic Skincare Unboxing & Routine", 
     reviewer: "Kavita Roy", 
-    tag: "Routine Vlog", 
+    tag: "Botanical Skincare", 
     rating: 5,
-    productId: "kriya-vit-c-facewash",
-    quote: "My favorite step in my daily skincare routine! Leaves skin feeling deeply cleansed, invigorated, and naturally radiant."
+    productId: "kriya-glow-renew-combo",
+    quote: "Handcrafted organic formulations designed for ultimate skin wellness and natural luminescence."
   }
 ];
 
@@ -147,7 +127,7 @@ const MediaCard: React.FC<{
   };
 
   const sanitizeVideo = (s?: string) => {
-    if (!s) return '/video-1.mp4';
+    if (!s) return '/videos/video1.mp4';
     let trimmed = s.trim();
     if (trimmed.startsWith('./')) trimmed = '/' + trimmed.slice(2);
     return trimmed;
@@ -175,7 +155,7 @@ const MediaCard: React.FC<{
         muted={isMuted}
         loop
         onError={() => {
-          if (vSrc !== '/video-1.mp4') setVSrc('/video-1.mp4');
+          if (vSrc !== '/videos/video1.mp4') setVSrc('/videos/video1.mp4');
         }}
       />
       
@@ -274,6 +254,8 @@ export const CinematicGallery: React.FC = () => {
     setSelectedVideo(media);
   };
 
+  const displayMedia = (mediaList && mediaList.length >= 3) ? mediaList : MEDIA;
+
   const matchedProduct = selectedVideo 
     ? products.find(p => p.id === selectedVideo.productId) || products[0]
     : null;
@@ -320,7 +302,7 @@ export const CinematicGallery: React.FC = () => {
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
         >
-          {mediaList.map((media, idx) => (
+          {displayMedia.map((media, idx) => (
             <div key={idx} className="snap-center sm:snap-start shrink-0 first:pl-4 sm:first:pl-0">
               <MediaCard 
                 media={media} 

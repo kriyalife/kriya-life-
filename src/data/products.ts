@@ -16,6 +16,31 @@ COMBO_DUO_IMAGE1,
 
 export const PRODUCTS: Product[] = [
   {
+    id: 'kriya-hire-oil',
+    name: 'Hire Oil',
+    tagline: 'Deep Nourishment & Growth',
+    category: 'Hair Care',
+    price: 10,
+    originalPrice: 10,
+    rating: 5.0,
+    reviewsCount: 1,
+    isBestseller: false,
+    isOrganic: true,
+    isNew: true,
+    volume: '100ml',
+    inStock: true,
+    skinTypes: ['All Hair Types'],
+    description: 'Nourishing botanical hair oil for strong, healthy, and shiny hair.',
+    ingredients: ['Coconut Oil', 'Argan Oil', 'Botanical Extracts'],
+    howToUse: 'Apply a few drops to scalp and hair, massage gently.',
+    images: ['https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=800'],
+    media: [
+      { type: 'image', src: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=800', alt: 'Hire Oil' }
+    ],
+    reviews: []
+  },
+
+  {
     id: 'kriya-vit-c-facewash',
     name: 'Kriya Vitamin C Face Wash',
     tagline: 'Gently Cleanses, Brightens & Revitalizes Dull Skin',
@@ -45,17 +70,13 @@ export const PRODUCTS: Product[] = [
     images: [
       VITAMIN_C_FACEWASH_IMAGE3,
       VITAMIN_C_FACEWASH_IMAGE1,
-      VITAMIN_C_FACEWASH_IMAGE2,
-      PRODUCT_2_IMAGE,
-      'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&q=80&w=800'
+      VITAMIN_C_FACEWASH_IMAGE2
     ],
     media: [
       { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE3, alt: 'Kriya Vitamin C Face Wash 100ml Tube' },
       { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE1, alt: 'Kriya Vitamin C Face Wash 100ml Tube' },
       { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE2, alt: 'Kriya Vitamin C Face Wash 100ml Tube' },
-      { type: 'image', src: PRODUCT_2_IMAGE, alt: 'Kriya Vitamin C Face Wash Detail View' },
-      { type: 'video', src: '/video1.mp4', alt: 'Vitamin C Cleansing Routine' },
-      { type: 'video', src: '/video2.mp4', alt: 'Morning Fresh Cleanse Demo' }
+      { type: 'video', src: '/videos/video2.mp4', alt: 'Vitamin C Natural Glow Cleanse Demo' }
     ],
     reviews: [
       {
@@ -109,18 +130,14 @@ export const PRODUCTS: Product[] = [
       NIGHT_CREAM_IMAGE1,
       NIGHT_CREAM_IMAGE2,
       NIGHT_CREAM_IMAGE3,
-      NIGHT_CREAM_IMAGE4,
-PRODUCT_2_IMAGE,
-      'https://images.unsplash.com/photo-1567928269937-251d1469e7f7?auto=format&fit=crop&q=80&w=800'
+      NIGHT_CREAM_IMAGE4
     ],
     media: [
       { type: 'image', src: NIGHT_CREAM_IMAGE1, alt: 'Kriya Olive Night Cream 30g Jar' },
       { type: 'image', src: NIGHT_CREAM_IMAGE2, alt: 'Kriya Olive Night Cream Side' },
       { type: 'image', src: NIGHT_CREAM_IMAGE3, alt: 'Kriya Olive Night Cream Detailed' },
       { type: 'image', src: NIGHT_CREAM_IMAGE4, alt: 'Kriya Olive Night Cream Top' },
-      { type: 'image', src: PRODUCT_2_IMAGE, alt: 'Kriya Olive Night Cream Detail View' },
-      { type: 'video', src: '/video3.mp4', alt: 'Overnight Night Cream Ritual' },
-      { type: 'video', src: '/video-5.mp4', alt: 'Night Care Application Guide' }
+      { type: 'video', src: '/videos/video1.mp4', alt: 'Olive Night Cream Customer Review' }
     ],
     reviews: [
       {
@@ -159,22 +176,14 @@ PRODUCT_2_IMAGE,
       COMBO_DUO_IMAGE1,
       COMBO_DUO_IMAGE2,
       COMBO_DUO_IMAGE3,
-      COMBO_DUO_IMAGE4,
-      VITAMIN_C_FACEWASH_IMAGE1,
-      NIGHT_CREAM_IMAGE1,
-  NIGHT_CREAM_IMAGE2,
-  NIGHT_CREAM_IMAGE3,
-  NIGHT_CREAM_IMAGE4
+      COMBO_DUO_IMAGE4
     ],
     media: [
       { type: 'image', src: COMBO_DUO_IMAGE1, alt: 'Kriya Complete Glow & Renew Combo Duo' },
       { type: 'image', src: COMBO_DUO_IMAGE2, alt: 'Kriya Complete Glow & Renew Combo Duo - Side' },
       { type: 'image', src: COMBO_DUO_IMAGE3, alt: 'Kriya Complete Glow & Renew Combo Duo - Detailed' },
       { type: 'image', src: COMBO_DUO_IMAGE4, alt: 'Kriya Complete Glow & Renew Combo Duo - Close' },
-      { type: 'image', src: VITAMIN_C_FACEWASH_IMAGE1, alt: 'Vitamin C Face Wash 100ml' },
-      { type: 'image', src: NIGHT_CREAM_IMAGE1, alt: 'Olive Souffle Cream 30g' },
-      { type: 'video', src: '/videos/video-6.mp4', alt: 'Vitamin C Radiance Boost' },
-      { type: 'video', src: '/videos/video-7.mp4', alt: 'Deep Moisture Restore' }
+      { type: 'video', src: '/videos/video3.mp4', alt: 'Complete Glow & Renew Duo Showcase' }
     ],
 
     reviews: [

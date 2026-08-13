@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-table';
 import { fetchOrdersFromSupabase, updateOrderStatusInSupabase, deleteOrderFromSupabase, OrderRecord } from '../../lib/db';
 import { autoSeedSupabase } from '../../lib/autoSeedSupabase';
+import { supabase } from '../../lib/supabaseClient';
 import { format } from 'date-fns';
 import { 
   Search, 
@@ -54,6 +55,29 @@ export const OrdersManager: React.FC = () => {
 
   useEffect(() => {
     fetchOrders();
+    
+    // Subscribe to realtime orders
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'orders' },
+        (payload) => {
+          console.log('Realtime order update:', payload);
+          fetchOrders(); // Re-fetch orders when there is a change
+        }
+      )
+      .subscribe();
+      
+    // Fallback: Poll every 10 seconds to ensure orders show up even if Realtime is not enabled in Supabase dashboard
+    const pollInterval = setInterval(() => {
+      fetchOrders();
+    }, 10000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(pollInterval);
+    };
   }, []);
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {

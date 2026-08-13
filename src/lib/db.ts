@@ -339,10 +339,16 @@ export const fetchProductsFromSupabase = async (): Promise<any[]> => {
         images = ['https://images.unsplash.com/photo-1608248597262-83818e6981f1?auto=format&fit=crop&q=80&w=800'];
       }
 
-      const media = Array.isArray(row.media) && row.media.length > 0 ? row.media : images.map((url) => ({
+      let media = Array.isArray(row.media) && row.media.length > 0 ? row.media : images.map((url) => ({
         type: url.match(/\.(mp4|webm|ogg)$/i) ? 'video' : 'image',
         src: url
       }));
+      
+      // If row.media is absent, preserve videos from defaultProd.media
+      if ((!Array.isArray(row.media) || row.media.length === 0) && defaultProd && Array.isArray(defaultProd.media)) {
+        const defaultVideos = defaultProd.media.filter(m => m.type === 'video');
+        media = [...media, ...defaultVideos];
+      }
 
       return {
         id: String(prodId),
