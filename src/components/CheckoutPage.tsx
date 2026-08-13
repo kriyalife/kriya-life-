@@ -50,7 +50,8 @@ export const CheckoutPage: React.FC = () => {
   });
 
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
-  const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'card' | 'upi' | 'paypal' | 'cod'>('razorpay');
+  const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
+  const [razorpaySubMethod, setRazorpaySubMethod] = useState<'card' | 'upi'>('card');
 
   // Card details state
   const [cardNumber, setCardNumber] = useState('');
@@ -87,11 +88,12 @@ export const CheckoutPage: React.FC = () => {
     return true;
   };
 
-  const handleRazorpayPayment = async () => {
+  const handleRazorpayPayment = async (subMethod: 'card' | 'upi' = razorpaySubMethod) => {
     if (!validateForm()) return;
 
     const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TOR78pOvdbvvqI';
     const amountInPaise = Math.round(finalTotal * 100);
+    const methodLabel = subMethod === 'card' ? 'Razorpay (1.1 Card)' : 'Razorpay (1.2 UPI)';
 
     let serverOrderId: string | undefined = undefined;
 
@@ -106,7 +108,8 @@ export const CheckoutPage: React.FC = () => {
           notes: {
             customer_name: `${address.firstName} ${address.lastName}`,
             email: address.email,
-            phone: address.phone
+            phone: address.phone,
+            sub_method: subMethod
           }
         })
       });
@@ -126,17 +129,19 @@ export const CheckoutPage: React.FC = () => {
         amount: amountInPaise,
         currency: 'INR',
         name: 'KRIYA Life Science',
-        description: `Order #${presetOrderId}`,
+        description: `Order #${presetOrderId} via ${subMethod === 'card' ? 'Card' : 'UPI'}`,
         image: '/assets/logo.png',
-        order_id: serverOrderId, // pass server generated Razorpay Order ID if available
+        order_id: serverOrderId,
         prefill: {
           name: `${address.firstName} ${address.lastName}`,
           email: address.email,
-          contact: address.phone
+          contact: address.phone,
+          ...(subMethod === 'upi' && upiId ? { vpa: upiId } : {})
         },
         notes: {
           order_id: presetOrderId,
-          address: `${address.street}, ${address.city}, ${address.state} - ${address.zipCode}`
+          address: `${address.street}, ${address.city}, ${address.state} - ${address.zipCode}`,
+          payment_option: subMethod
         },
         theme: {
           color: '#10B981'
@@ -164,7 +169,7 @@ export const CheckoutPage: React.FC = () => {
           placeOrder(
             address,
             shippingMethod,
-            `Razorpay (Live) - ID: ${paymentId}`,
+            `${methodLabel} - ID: ${paymentId}`,
             presetOrderId
           );
         },
@@ -186,16 +191,16 @@ export const CheckoutPage: React.FC = () => {
         placeOrder(
           address,
           shippingMethod,
-          `Razorpay (Key: ${keyId})`,
+          `${methodLabel} - Key: ${keyId}`,
           presetOrderId
         );
       }
     } else {
-      showToast('Razorpay Gateway', `Processing order with Razorpay Key: ${keyId}`, 'info');
+      showToast('Razorpay Gateway', `Processing order with ${methodLabel}`, 'info');
       placeOrder(
         address,
         shippingMethod,
-        `Razorpay (Key: ${keyId})`,
+        `${methodLabel} - Key: ${keyId}`,
         presetOrderId
       );
     }
@@ -209,11 +214,11 @@ export const CheckoutPage: React.FC = () => {
       placeOrder(
         address,
         shippingMethod,
-        'Cash on Delivery',
+        'Cash on Delivery (2. COD)',
         presetOrderId
       );
     } else {
-      handleRazorpayPayment();
+      handleRazorpayPayment(razorpaySubMethod);
     }
   };
 
@@ -251,96 +256,82 @@ export const CheckoutPage: React.FC = () => {
     <div className="bg-[#0D2217] text-white py-12 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
-          <button
-            onClick={() => setCurrentView('cart')}
-            className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-200 hover:text-white transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Return to Cart</span>
-          </button>
-
-          <div className="text-right">
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400 flex items-center gap-1 justify-end">
-              <Lock className="w-3 h-3 text-emerald-400" />
-              256-Bit SSL Encrypted
-            </span>
-            <span className="font-serif text-lg font-semibold text-white">Secure Checkout</span>
-          </div>
-        </div>
-
         <form onSubmit={handleSubmitOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
           {/* Left 7 Cols: Information & Shipping & Payment */}
           <div className="lg:col-span-7 space-y-8">
             
-            {/* Step 1: Customer Contact Info */}
+            {/* Step 1: Shipping Address & Customer Information */}
             <div className="bg-stone-900/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-white/15 shadow-xl space-y-4">
-              <h3 className="font-serif text-xl font-semibold text-white flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-emerald-500 text-stone-950 text-xs flex items-center justify-center font-sans font-extrabold">1</span>
-                <span>Contact Details</span>
-              </h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div>
-                  <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">First Name *</label>
-                  <input
-                    type="text"
-                    value={address.firstName}
-                    onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    placeholder="e.g. Ananya"
-                    className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">Last Name *</label>
-                  <input
-                    type="text"
-                    value={address.lastName}
-                    onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    placeholder="e.g. Sharma"
-                    className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
-                    required
-                  />
-                </div>
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 className="font-serif text-xl font-semibold text-white flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-emerald-500 text-stone-950 text-xs flex items-center justify-center font-sans font-extrabold">1</span>
+                  <span>Shipping Address</span>
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setCurrentView('cart')}
+                  className="inline-flex items-center gap-1.5 text-xs text-emerald-300 hover:text-emerald-200 transition-colors cursor-pointer font-medium"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Return to Cart</span>
+                </button>
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">Email Address *</label>
-                  <input
-                    type="email"
-                    value={address.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="e.g. ananya@example.com"
-                    className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">Phone Number *</label>
-                  <input
-                    type="tel"
-                    value={address.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    placeholder="e.g. +1 (555) 234-5678"
-                    className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Step 2: Full Address */}
-            <div className="bg-stone-900/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-white/15 shadow-xl space-y-4">
-              <h3 className="font-serif text-xl font-semibold text-white flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-emerald-500 text-stone-950 text-xs flex items-center justify-center font-sans font-extrabold">2</span>
-                <span>Shipping Address</span>
-              </h3>
 
               <div className="space-y-4 pt-2">
+                {/* Contact Name */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">First Name *</label>
+                    <input
+                      type="text"
+                      value={address.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      placeholder="e.g. Ananya"
+                      className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">Last Name *</label>
+                    <input
+                      type="text"
+                      value={address.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      placeholder="e.g. Sharma"
+                      className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Contact Email & Phone */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">Email Address *</label>
+                    <input
+                      type="email"
+                      value={address.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      placeholder="e.g. ananya@example.com"
+                      className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">Phone Number *</label>
+                    <input
+                      type="tel"
+                      value={address.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      placeholder="e.g. +91 98765 43210"
+                      className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Street Address */}
                 <div>
                   <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">Street Address *</label>
                   <input
@@ -407,22 +398,22 @@ export const CheckoutPage: React.FC = () => {
                     onChange={(e) => handleInputChange('country', e.target.value)}
                     className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white"
                   >
+                    <option value="India">India</option>
                     <option value="United States">United States</option>
                     <option value="Canada">Canada</option>
                     <option value="United Kingdom">United Kingdom</option>
                     <option value="Australia">Australia</option>
-                    <option value="India">India</option>
                     <option value="United Arab Emirates">United Arab Emirates</option>
                   </select>
                 </div>
               </div>
             </div>
 
-            {/* Step 3: Payment Section */}
+            {/* Step 2: Payment Section */}
             <div className="bg-stone-900/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-white/15 shadow-xl space-y-6">
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <h3 className="font-serif text-xl font-semibold text-white flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-emerald-500 text-stone-950 text-xs flex items-center justify-center font-sans font-extrabold">3</span>
+                  <span className="w-6 h-6 rounded-full bg-emerald-500 text-stone-950 text-xs flex items-center justify-center font-sans font-extrabold">2</span>
                   <span>Payment Gateway</span>
                 </h3>
 
@@ -437,188 +428,66 @@ export const CheckoutPage: React.FC = () => {
                 </button>
               </div>
 
-              {/* Payment Tabs */}
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+              {/* Payment Gateways: Strictly 2 Options (1. Razorpay / UPI, 2. COD) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* 1. Razorpay / UPI */}
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('razorpay')}
-                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer col-span-2 sm:col-span-1 ${
+                  className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-between gap-3 cursor-pointer relative overflow-hidden ${
                     paymentMethod === 'razorpay'
-                      ? 'bg-emerald-500 text-stone-950 border-emerald-400 shadow-md font-extrabold'
-                      : 'bg-stone-950 text-white border-white/20 hover:border-white/40'
+                      ? 'bg-emerald-950/80 border-emerald-400 ring-2 ring-emerald-500/40 shadow-lg'
+                      : 'bg-stone-950 border-white/15 hover:border-white/30'
                   }`}
                 >
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>Razorpay</span>
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                      <div className={`p-2 rounded-xl ${paymentMethod === 'razorpay' ? 'bg-emerald-500 text-stone-950' : 'bg-white/10 text-emerald-400'}`}>
+                        <ShieldCheck className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-serif font-bold text-white block">1. Razorpay / UPI</span>
+                        <span className="text-[10px] text-emerald-300/80 font-medium">GPay, PhonePe, UPI & Cards</span>
+                      </div>
+                    </div>
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMethod === 'razorpay' ? 'border-emerald-400 bg-emerald-400' : 'border-white/30'}`}>
+                      {paymentMethod === 'razorpay' && <div className="w-1.5 h-1.5 rounded-full bg-stone-950" />}
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-emerald-100/70 font-light">
+                    Instant & encrypted payment via UPI Apps, GPay, PhonePe, Cards & NetBanking.
+                  </p>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('card')}
-                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    paymentMethod === 'card'
-                      ? 'bg-emerald-500 text-stone-950 border-emerald-400 shadow-md font-extrabold'
-                      : 'bg-stone-950 text-white border-white/20 hover:border-white/40'
-                  }`}
-                >
-                  <CreditCard className="w-4 h-4" />
-                  <span>Card</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('upi')}
-                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    paymentMethod === 'upi'
-                      ? 'bg-emerald-500 text-stone-950 border-emerald-400 shadow-md font-extrabold'
-                      : 'bg-stone-950 text-white border-white/20 hover:border-white/40'
-                  }`}
-                >
-                  <QrCode className="w-4 h-4" />
-                  <span>UPI</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('paypal')}
-                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    paymentMethod === 'paypal'
-                      ? 'bg-emerald-500 text-stone-950 border-emerald-400 shadow-md font-extrabold'
-                      : 'bg-stone-950 text-white border-white/20 hover:border-white/40'
-                  }`}
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>PayPal</span>
-                </button>
-
+                {/* 2. COD */}
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('cod')}
-                  className={`p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-between gap-3 cursor-pointer relative overflow-hidden ${
                     paymentMethod === 'cod'
-                      ? 'bg-emerald-500 text-stone-950 border-emerald-400 shadow-md font-extrabold'
-                      : 'bg-stone-950 text-white border-white/20 hover:border-white/40'
+                      ? 'bg-emerald-950/80 border-emerald-400 ring-2 ring-emerald-500/40 shadow-lg'
+                      : 'bg-stone-950 border-white/15 hover:border-white/30'
                   }`}
                 >
-                  <Banknote className="w-4 h-4" />
-                  <span>COD</span>
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                      <div className={`p-2 rounded-xl ${paymentMethod === 'cod' ? 'bg-emerald-500 text-stone-950' : 'bg-white/10 text-emerald-400'}`}>
+                        <Banknote className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-serif font-bold text-white block">2. COD</span>
+                        <span className="text-[10px] text-emerald-300/80 font-medium">Cash on Delivery</span>
+                      </div>
+                    </div>
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMethod === 'cod' ? 'border-emerald-400 bg-emerald-400' : 'border-white/30'}`}>
+                      {paymentMethod === 'cod' && <div className="w-1.5 h-1.5 rounded-full bg-stone-950" />}
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-emerald-100/70 font-light">
+                    Pay with Cash or UPI upon receiving your order at your doorstep.
+                  </p>
                 </button>
               </div>
-
-              {/* Razorpay Banner & Info */}
-              {paymentMethod === 'razorpay' && (
-                <div className="p-4 bg-stone-950/90 rounded-2xl border border-emerald-500/30 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                      <span className="text-xs font-bold text-white uppercase tracking-wider">Razorpay Live Gateway</span>
-                    </div>
-                    <span className="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full font-mono">
-                      Key: rzp_live_TOR78pOvdbvvqI
-                    </span>
-                  </div>
-                  <p className="text-xs text-emerald-100/80 leading-relaxed font-light">
-                    Pay securely using UPI, Credit/Debit Cards, NetBanking, Wallets, or PayLater via Razorpay's 256-bit encrypted checkout modal.
-                  </p>
-                  <div className="flex flex-wrap items-center gap-2 pt-1 text-[10px] text-emerald-200/60 font-semibold">
-                    <span className="bg-white/5 px-2 py-1 rounded border border-white/10">GPay</span>
-                    <span className="bg-white/5 px-2 py-1 rounded border border-white/10">PhonePe</span>
-                    <span className="bg-white/5 px-2 py-1 rounded border border-white/10">Paytm</span>
-                    <span className="bg-white/5 px-2 py-1 rounded border border-white/10">Visa / Mastercard / Rupay</span>
-                    <span className="bg-white/5 px-2 py-1 rounded border border-white/10">NetBanking</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Card Inputs */}
-              {paymentMethod === 'card' && (
-                <div className="space-y-4 pt-2">
-                  <div>
-                    <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">Card Number</label>
-                    <input
-                      type="text"
-                      value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value)}
-                      placeholder="4532 •••• •••• 8821"
-                      className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
-                      maxLength={19}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">Cardholder Name</label>
-                    <input
-                      type="text"
-                      value={cardName}
-                      onChange={(e) => setCardName(e.target.value)}
-                      placeholder="e.g. Ananya Sharma"
-                      className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">Expiry (MM/YY)</label>
-                      <input
-                        type="text"
-                        value={cardExpiry}
-                        onChange={(e) => setCardExpiry(e.target.value)}
-                        placeholder="08/28"
-                        className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
-                        maxLength={5}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-white uppercase tracking-wider mb-1">CVC / CVV</label>
-                      <input
-                        type="password"
-                        value={cardCvc}
-                        onChange={(e) => setCardCvc(e.target.value)}
-                        placeholder="•••"
-                        className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
-                        maxLength={4}
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* UPI Inputs */}
-              {paymentMethod === 'upi' && (
-                <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-bold text-white uppercase tracking-wider">UPI VPA ID or Phone Pay ID</label>
-                  <input
-                    type="text"
-                    value={upiId}
-                    onChange={(e) => setUpiId(e.target.value)}
-                    placeholder="e.g. ananya@okaxis or 9876543210@upi"
-                    className="w-full px-4 py-2.5 bg-stone-950 rounded-xl border border-white/20 text-sm focus:outline-none focus:border-emerald-400 text-white placeholder-white/40"
-                    required
-                  />
-                  <p className="text-xs text-emerald-100/70">An instant collect request will be pushed to your UPI app.</p>
-                </div>
-              )}
-              {/* Cash on Delivery */}
-              {paymentMethod === 'cod' && (
-                <div className="p-4 bg-stone-950 rounded-2xl border border-white/15 text-center space-y-2">
-                  <Banknote className="w-8 h-8 text-emerald-400 mx-auto" />
-                  <p className="text-xs font-semibold text-white">Cash on Delivery (COD)</p>
-                  <p className="text-xs text-emerald-100/70">You will pay with cash or UPI at the time of delivery.</p>
-                </div>
-              )}
-
-              {/* PayPal / Apple Pay */}
-              {paymentMethod === 'paypal' && (
-                <div className="p-4 bg-stone-950 rounded-2xl border border-white/15 text-center space-y-2">
-                  <Sparkles className="w-8 h-8 text-emerald-400 mx-auto" />
-                  <p className="text-xs font-semibold text-white">Express 1-Click Checkout with PayPal / Apple Pay</p>
-                  <p className="text-xs text-emerald-100/70">You will be securely redirected after clicking complete order.</p>
-                </div>
-              )}
             </div>
 
           </div>

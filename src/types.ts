@@ -2,6 +2,7 @@ export type Category =
   | 'All' 
   | 'Face Cleansers' 
   | 'Moisturizers & Creams'
+  | 'Hair Care'
   | 'Combos & Kits';
 
 export interface Shade {
