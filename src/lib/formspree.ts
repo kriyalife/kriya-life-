@@ -85,6 +85,17 @@ export async function sendOrderToFormspree(order: Order): Promise<boolean> {
     shipping_address: addressFormatted,
     shipping_method: order.shippingMethod === 'express' ? 'Express Delivery' : 'Standard Delivery',
     payment_method: order.paymentMethod,
+    payment_detail: order.paymentMethod.toLowerCase().includes('razorpay') || order.paymentMethod.toLowerCase().includes('upi') || order.paymentMethod.toLowerCase().includes('card')
+      ? 'Option 1: Razorpay / UPI (GPay, PhonePe, Paytm, BHIM, Cards & NetBanking - 256-Bit SSL Encrypted)'
+      : 'Option 2: Cash on Delivery (COD - Doorstep Pay via Cash or UPI)',
+    payment_type: order.paymentMethod.toLowerCase().includes('razorpay') || order.paymentMethod.toLowerCase().includes('upi') || order.paymentMethod.toLowerCase().includes('card')
+      ? 'Online Payment (Razorpay / UPI)'
+      : 'Cash on Delivery (COD)',
+    payment_status: order.paymentMethod.toLowerCase().includes('razorpay') || order.paymentMethod.toLowerCase().includes('upi') || order.paymentMethod.toLowerCase().includes('card')
+      ? 'Paid / Verified Online'
+      : 'Pending (Collect on Delivery)',
+    payment_gateway: order.paymentMethod.toLowerCase().includes('razorpay') ? 'Razorpay Gateway (256-Bit SSL)' : 'COD - Doorstep Delivery',
+    currency: 'INR (₹)',
     tracking_number: order.trackingNumber,
     items_breakdown: itemsListFormatted,
     items_count: totalQuantity,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Package, MapPin, Phone, Mail, Calendar, CheckCircle, Clock } from 'lucide-react';
+import { X, Package, MapPin, Phone, Mail, Calendar, CheckCircle, Clock, User, CreditCard } from 'lucide-react';
 import { OrderRecord } from '../../lib/db';
 import { format } from 'date-fns';
 
@@ -74,17 +74,24 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-2xl border border-white/15 bg-stone-950/80 space-y-3">
                   <div className="flex items-start gap-2.5">
+                    <User className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-emerald-100/60 font-bold block">Customer Name</span>
+                      <span className="text-sm font-medium text-white">{order.customer_name || 'N/A'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2.5">
                     <Mail className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
                     <div>
                       <span className="text-[10px] uppercase tracking-wider text-emerald-100/60 font-bold block">Email Address</span>
-                      <span className="text-sm font-medium text-white">{order.user_email || 'N/A'}</span>
+                      <span className="text-sm font-medium text-white">{order.customer_email || order.user_email || 'N/A'}</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-2.5">
                     <Phone className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
                     <div>
                       <span className="text-[10px] uppercase tracking-wider text-emerald-100/60 font-bold block">Phone Number</span>
-                      <span className="text-sm font-medium text-white">{order.phone || 'N/A'}</span>
+                      <span className="text-sm font-medium text-white">{order.phone || order.customer_phone || 'N/A'}</span>
                     </div>
                   </div>
                 </div>
@@ -95,7 +102,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
                     <div>
                       <span className="text-[10px] uppercase tracking-wider text-emerald-100/60 font-bold block">Shipping Address</span>
                       <span className="text-sm text-white/90 leading-relaxed block mt-1">
-                        {order.address || 'No address provided'}
+                        {order.address || order.shipping_address || 'No address provided'}
                       </span>
                     </div>
                   </div>
@@ -164,13 +171,22 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
             </div>
 
             {/* Payment Details */}
-             <div>
-              <h4 className="text-sm font-bold text-white mb-3">Payment Info</h4>
-              <div className="p-4 rounded-2xl border border-white/15 bg-stone-950/80 flex items-center justify-between">
-                 <span className="text-sm font-medium text-emerald-100/80">Payment Status</span>
-                 <span className="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-blue-950 text-blue-300 border border-blue-500/40">
-                    {order.payment_status || 'Pending'}
-                 </span>
+            <div>
+              <h4 className="text-sm font-bold text-white mb-3">Payment Information</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl border border-white/15 bg-stone-950/80 flex items-center justify-between">
+                   <div className="flex items-center gap-2">
+                     <CreditCard className="w-4 h-4 text-emerald-400" />
+                     <span className="text-sm font-medium text-emerald-100/80">Method</span>
+                   </div>
+                   <span className="text-sm font-medium text-white">{order.payment_method || 'Cash on Delivery'}</span>
+                </div>
+                <div className="p-4 rounded-2xl border border-white/15 bg-stone-950/80 flex items-center justify-between">
+                   <span className="text-sm font-medium text-emerald-100/80">Payment Status</span>
+                   <span className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border ${order.payment_status?.toLowerCase().includes('paid') ? 'bg-blue-950 text-blue-300 border-blue-500/40' : 'bg-amber-950 text-amber-300 border-amber-500/40'}`}>
+                      {order.payment_status || 'Pending'}
+                   </span>
+                </div>
               </div>
             </div>
             

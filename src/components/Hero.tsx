@@ -76,28 +76,7 @@ export const Hero: React.FC = () => {
               crafted to illuminate your natural aura.
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-center gap-4 pt-2 w-full sm:w-auto"
-            >
-              <button
-                onClick={() => {
-                  setSelectedCategory('All');
-                  const catalogEl = document.getElementById('kriya-products-catalog');
-                  if (catalogEl) {
-                    catalogEl.scrollIntoView({ behavior: 'smooth' });
-                  } else {
-                    window.scrollTo({ top: 750, behavior: 'smooth' });
-                  }
-                }}
-                className="w-full sm:w-auto px-8 py-4 bg-emerald-400 text-stone-950 font-extrabold text-sm tracking-wider rounded-full hover:bg-emerald-300 hover:shadow-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer group"
-              >
-                <span>SEE ALL PRODUCTS</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </motion.div>
+
 
             <motion.div
               initial={{ opacity: 0 }}

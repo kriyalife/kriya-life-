@@ -16,31 +16,6 @@ COMBO_DUO_IMAGE1,
 
 export const PRODUCTS: Product[] = [
   {
-    id: 'kriya-hire-oil',
-    name: 'Hire Oil',
-    tagline: 'Deep Nourishment & Growth',
-    category: 'Hair Care',
-    price: 10,
-    originalPrice: 10,
-    rating: 5.0,
-    reviewsCount: 1,
-    isBestseller: false,
-    isOrganic: true,
-    isNew: true,
-    volume: '100ml',
-    inStock: true,
-    skinTypes: ['All Hair Types'],
-    description: 'Nourishing botanical hair oil for strong, healthy, and shiny hair.',
-    ingredients: ['Coconut Oil', 'Argan Oil', 'Botanical Extracts'],
-    howToUse: 'Apply a few drops to scalp and hair, massage gently.',
-    images: ['https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=800'],
-    media: [
-      { type: 'image', src: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=800', alt: 'Hire Oil' }
-    ],
-    reviews: []
-  },
-
-  {
     id: 'kriya-vit-c-facewash',
     name: 'Kriya Vitamin C Face Wash',
     tagline: 'Gently Cleanses, Brightens & Revitalizes Dull Skin',

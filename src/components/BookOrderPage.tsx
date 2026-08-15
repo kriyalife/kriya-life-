@@ -97,6 +97,12 @@ export const BookOrderPage: React.FC = () => {
             total_amount_paid: `₹${totalPrice.toLocaleString('en-IN')}`,
             items_breakdown: `1. ${formData.product} | Qty: ${formData.quantity} | Unit: ₹${unitPrice} | Total: ₹${totalPrice}`,
             shipping_address: formData.address,
+            payment_method: 'Option 2: Cash on Delivery (COD)',
+            payment_detail: 'Cash or UPI on Doorstep Delivery',
+            payment_type: 'Cash on Delivery (COD)',
+            payment_status: 'Pending (Pay on Delivery)',
+            payment_gateway: 'COD - Doorstep Payment',
+            currency: 'INR (₹)',
             pay_link: payLink
           })
         });

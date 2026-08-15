@@ -113,11 +113,18 @@ export const OrdersManager: React.FC = () => {
       header: 'Order ID',
       cell: info => <span className="font-mono text-xs text-emerald-300">{info.getValue().substring(0, 8)}</span>,
     }),
+    columnHelper.accessor('customer_name', {
+      header: 'Customer Name',
+      cell: info => <div className="font-medium text-white max-w-[150px] truncate">{info.getValue() || "N/A"}</div>,
+    }),
     columnHelper.accessor(row => row.customer_email || row.user_email, {
       id: 'customer_email',
-      header: 'Email',
+      header: 'Email & Phone',
       cell: info => (
-        <div className="font-medium text-white">{info.getValue() || "N/A"}</div>
+        <div className="flex flex-col">
+          <span className="font-medium text-white max-w-[150px] truncate" title={info.getValue()}>{info.getValue() || "N/A"}</span>
+          <span className="text-[11px] text-emerald-100/70">{info.row.original.phone || info.row.original.customer_phone || "No Phone"}</span>
+        </div>
       ),
     }),
     columnHelper.accessor(row => row.product_name || row.product_id, {
@@ -144,7 +151,7 @@ export const OrdersManager: React.FC = () => {
     columnHelper.accessor('quantity', {
       header: 'Qty',
       cell: info => (
-        <div className="text-emerald-100/80">{info.getValue() || 1}</div>
+        <div className="text-emerald-100/80 text-center">{info.getValue() || 1}</div>
       ),
     }),
     columnHelper.accessor(row => {
@@ -156,6 +163,18 @@ export const OrdersManager: React.FC = () => {
       header: 'Total',
       cell: info => (
         <div className="font-semibold text-emerald-300">₹{Number(info.getValue() || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
+      ),
+    }),
+    columnHelper.accessor(row => row.payment_method || 'COD', {
+      id: 'payment_method',
+      header: 'Payment',
+      cell: info => (
+        <div className="flex flex-col">
+          <span className="text-[11px] uppercase tracking-wider text-emerald-200">{info.getValue()}</span>
+          <span className={`text-[10px] font-semibold mt-0.5 ${info.row.original.payment_status?.toLowerCase().includes('paid') ? 'text-blue-300' : 'text-amber-300'}`}>
+            {info.row.original.payment_status || 'Pending'}
+          </span>
+        </div>
       ),
     }),
     columnHelper.accessor('created_at', {

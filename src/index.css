@@ -70,13 +70,19 @@ div#root:nth-of-type(1) > div:nth-of-type(1) > main:nth-of-type(1) > div:nth-of-
   padding: 15px;
   border-radius: 50%;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  z-index: 1000;
+  z-index: 50;
   transition: 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
   line-height: 1;
+}
+
+@media (max-width: 639px) {
+  .whatsapp-btn {
+    bottom: 80px;
+  }
 }
 
 .whatsapp-btn:hover {

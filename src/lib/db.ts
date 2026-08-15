@@ -75,8 +75,27 @@ export const getOrders = async (): Promise<OrderRecord[] | null> => {
 };
 
 export const fetchOrdersFromSupabase = async (): Promise<OrderRecord[]> => {
-  const orders = await getOrders();
-  return orders || getLocalOrders();
+  const remoteOrders = await getOrders() || [];
+  const localOrders = getLocalOrders() || [];
+  
+  // Merge, prioritizing remote orders but keeping local orders that haven't synced yet
+  const mergedMap = new Map<string, OrderRecord>();
+  
+  // Add local orders first
+  localOrders.forEach(o => {
+    if (o.id) mergedMap.set(o.id, o);
+  });
+  
+  // Add remote orders (overwrites local ones if they share an ID)
+  remoteOrders.forEach(o => {
+    if (o.id) mergedMap.set(o.id, o);
+  });
+  
+  return Array.from(mergedMap.values()).sort((a, b) => {
+    const timeA = new Date(a.created_at || 0).getTime();
+    const timeB = new Date(b.created_at || 0).getTime();
+    return timeB - timeA;
+  });
 };
 
 const isUuid = (val?: string | null): boolean =>
