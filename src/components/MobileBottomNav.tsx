@@ -65,22 +65,15 @@ export const MobileBottomNav: React.FC = () => {
         <span className="text-[10px] font-bold tracking-wider uppercase text-emerald-300">Quiz</span>
       </button>
 
-      {/* Wishlist */}
+      {/* Order Tracking */}
       <button
-        onClick={() => setCurrentView('wishlist')}
-        className={`flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all cursor-pointer relative ${
-          currentView === 'wishlist' ? 'text-emerald-400 font-bold' : 'text-emerald-100/60 hover:text-white'
+        onClick={() => setCurrentView('order-tracking')}
+        className={`flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all cursor-pointer ${
+          currentView === 'order-tracking' ? 'text-emerald-400 font-bold' : 'text-emerald-100/60 hover:text-white'
         }`}
       >
-        <div className="relative">
-          <Heart className="w-5 h-5 mb-0.5" />
-          {wishlist.length > 0 && (
-            <span className="absolute -top-1 -right-2 bg-emerald-400 text-stone-950 text-[9px] font-black rounded-full w-4 h-4 flex items-center justify-center">
-              {wishlist.length}
-            </span>
-          )}
-        </div>
-        <span className="text-[10px] tracking-wider uppercase">Saved</span>
+        <PackageCheck className="w-5 h-5 mb-0.5" />
+        <span className="text-[10px] tracking-wider uppercase whitespace-nowrap">My Order</span>
       </button>
 
       {/* Cart */}
