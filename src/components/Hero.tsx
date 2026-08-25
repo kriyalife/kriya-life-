@@ -6,7 +6,7 @@ import heroBgImage from '../assets/images/regenerated_image_1784986939391.png';
 import comboHeroNewImg from '../assets/images/regenerated_image_1786447986783.jpg';
 
 export const Hero: React.FC = () => {
-  const { products, addToCart, setSelectedProduct, setSelectedCategory, setIsSkinQuizOpen, setIsCartOpen } = useShop();
+  const { products, addToCart, setSelectedProduct, setSelectedCategory, setIsSkinQuizOpen, setIsCartOpen, setCurrentView } = useShop();
 
   // Retrieve the primary combo duo product
   const comboProduct = products.find(p => p.id === 'kriya-glow-renew-combo') || products[0];
@@ -15,7 +15,9 @@ export const Hero: React.FC = () => {
     e.stopPropagation();
     if (comboProduct) {
       addToCart(comboProduct, 1);
-      setIsCartOpen(true);
+      setCurrentView('checkout');
+      const navigate = (window as any)._navigate;
+      if (navigate) navigate('/checkout');
     }
   };
 
@@ -183,8 +185,8 @@ export const Hero: React.FC = () => {
                     onClick={handleAddComboToCart}
                     className="px-5 py-3 bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-lg hover:shadow-xl cursor-pointer flex items-center gap-2 shrink-0 group/btn"
                   >
-                    <ShoppingBag className="w-4 h-4 fill-stone-950" />
-                    <span>Add Combo</span>
+                    <Sparkles className="w-4 h-4 fill-stone-950" />
+                    <span>Buy Now</span>
                   </button>
                 </div>
               </div>

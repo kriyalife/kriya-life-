@@ -276,20 +276,6 @@ export const Navbar: React.FC = () => {
                 <User className="w-5 h-5 transition-transform group-hover:scale-110" />
               </Link>
             )}
-
-            {/* Cart Icon with Count Badge UI */}
-            <button
-              id="nav-cart-btn"
-              onClick={() => setIsCartOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500 text-stone-950 font-bold rounded-full hover:bg-emerald-400 transition-all shadow-md group relative hover:scale-105 active:scale-95 cursor-pointer shrink-0"
-              aria-label="Open Shopping Cart"
-            >
-              <ShoppingBag className="w-4 h-4 text-stone-950 shrink-0" />
-              <span className="text-xs font-extrabold tracking-widest hidden lg:inline">CART</span>
-              <span className="bg-stone-950 text-white text-[11px] font-extrabold px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-2xs">
-                {totalCartCount}
-              </span>
-            </button>
           </div>
         </div>
       </div>

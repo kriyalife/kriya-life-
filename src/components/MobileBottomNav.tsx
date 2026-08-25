@@ -75,22 +75,6 @@ export const MobileBottomNav: React.FC = () => {
         <PackageCheck className="w-5 h-5 mb-0.5" />
         <span className="text-[10px] tracking-wider uppercase whitespace-nowrap">My Order</span>
       </button>
-
-      {/* Cart */}
-      <button
-        onClick={() => setIsCartOpen(true)}
-        className="flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all text-emerald-100/60 hover:text-white cursor-pointer relative"
-      >
-        <div className="relative">
-          <ShoppingBag className="w-5 h-5 mb-0.5 text-emerald-400" />
-          {totalCartCount > 0 && (
-            <span className="absolute -top-1 -right-2.5 bg-emerald-400 text-stone-950 text-[9px] font-black rounded-full px-1 min-w-[16px] h-4 flex items-center justify-center shadow-md">
-              {totalCartCount}
-            </span>
-          )}
-        </div>
-        <span className="text-[10px] font-extrabold tracking-wider uppercase text-white">Cart</span>
-      </button>
     </nav>
   );
 };

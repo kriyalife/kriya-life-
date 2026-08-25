@@ -430,10 +430,13 @@ export const CinematicGallery: React.FC = () => {
                              onClick={(e) => {
                               e.stopPropagation();
                               addToCart(matchedProduct, 1);
+                              setCurrentView('checkout');
+                              const navigate = (window as any)._navigate;
+                              if (navigate) navigate('/checkout');
                             }}
                             className="text-xs font-bold uppercase tracking-wider bg-[#153323] text-white px-4 py-2 rounded-full hover:bg-black transition-colors cursor-pointer"
                           >
-                            Add to Cart
+                            Buy Now
                           </button>
                           <span className="text-xs text-[#153323]/70 underline font-medium hover:text-[#153323]">
                             View Details &rarr;

@@ -73,10 +73,6 @@ export const ProductDetailPage: React.FC = () => {
 
   const isFavorite = isInWishlist(product.id);
 
-  const handleAddToCart = () => {
-    addToCart(product, quantity, selectedShade);
-  };
-
   const handleBuyNow = () => {
     if (!currentUser) {
       showToast('Authentication Required', 'Please log in to place an order.', 'warning');
@@ -274,26 +270,16 @@ export const ProductDetailPage: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Add To Cart */}
+                {/* Buy Now Direct Button */}
                 <button
-                  id="pdp-add-to-cart-btn"
-                  onClick={handleAddToCart}
-                  className="flex-1 py-4 bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-extrabold text-sm rounded-full transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-wider cursor-pointer"
+                  id="pdp-buy-now-btn"
+                  onClick={handleBuyNow}
+                  className="flex-1 py-4 bg-white text-stone-950 hover:bg-emerald-100 font-extrabold text-sm rounded-full transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-wider cursor-pointer"
                 >
-                  <ShoppingBag className="w-4 h-4 text-stone-950" />
-                  <span>ADD TO RITUAL CART — ₹{(product.price * quantity).toLocaleString('en-IN')}</span>
+                  <Sparkles className="w-4 h-4 text-emerald-600" />
+                  <span>BUY NOW — ₹{(product.price * quantity).toLocaleString('en-IN')}</span>
                 </button>
               </div>
-
-              {/* Buy Now Direct Button */}
-              <button
-                id="pdp-buy-now-btn"
-                onClick={handleBuyNow}
-                className="w-full py-3.5 bg-white text-stone-950 hover:bg-emerald-100 font-extrabold text-sm rounded-full transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-wider cursor-pointer"
-              >
-                <Sparkles className="w-4 h-4 text-emerald-600" />
-                <span>INSTANT BUY NOW & CHECKOUT</span>
-              </button>
             </div>
 
             {/* Express Value Props */}
