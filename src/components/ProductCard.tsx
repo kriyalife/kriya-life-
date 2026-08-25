@@ -176,8 +176,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="px-3 py-2 sm:px-4 sm:py-2 bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-extrabold text-[10px] sm:text-xs rounded-xl transition-all shadow-md flex items-center gap-1.5 hover:scale-105 active:scale-95 cursor-pointer uppercase tracking-wider"
           >
             <Sparkles className="w-3.5 h-3.5 text-stone-950" />
-            <span className="hidden sm:inline">BUY NOW</span>
-            <span className="sm:hidden hidden min-[360px]:inline">BUY</span>
+            <span className="whitespace-nowrap">BUY NOW</span>
           </button>
         </div>
       </div>
